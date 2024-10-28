@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Plotter Interface</title>
+    <link rel="stylesheet" href="./style.css">
+    <link rel="icon" href="./favicon.ico" type="image/x-icon">
+  </head>
+  <body>
+    <main>
+        <h1>Pen-Plotting Robot Interface</h1>
+        <br></br>
+        <h2>Pen Up/Down</h2>
+        <p id="pen_status">Current Status: </p>
+        <button type="button" onclick="pen_up(true);get_pen_val()">Pen Up</button><br></br>
+        <button type="button" onclick="pen_up(false);get_pen_val()">Pen Down</button>
+
+        <h2>Teleop Mode: Manually control the robot</h2>
+        <h3>Select Number of Steps:</h3>
+        <form>
+             <label for="quantity">Select a number between 1 and 200:</label>
+             <input type="number" step="1" name = "steps" id = "steps" min = "1" max = "200" onchange="change_steps(this.value)">
+        </form>
+        <br></br>
+
+        <button type="button">Click Me!</button>  
+    </main>
+    <script>
+    var x = ""
+    function change_steps(value){
+      fetch('/?led=' + value)
+          .then(response => response.text())
+          .then(data => console.log('LED updated to: ' + value));
+        
+    }
+
+    function pen_up(value){
+      fetch('/?pen-up='+value).then(response => response.text()).then(data => alert("value is " + value));
+      x=value
+
+    }
+
+    function get_pen_val(){
+      fetch("/?pen-up") .then(response => response.text())
+      .then(status => {
+        // Update the HTML to show the current pen status
+        const statusElement = document.getElementById('pen_status');
+        statusElement.textContent = 'Current Status: ' + x
+      })
+    }
+
+    
+
+
+
+    window.onload = pen_up(true);
+
+
+
+
+    </script>
+  </body>
+</html>
