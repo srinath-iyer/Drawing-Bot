@@ -3,7 +3,17 @@ This file provides all necessary methods
 
 """
 
+from machine import pin
+import utime
+
 class Bot:
+    # create constant pins (all capitalized)
+    # step, enable, direction for each 1 of the 2 stepper drivers and 1 for servo (output) 7
+    # limited switches, one for x, one for y (input) 2
+
+    
+
+
     def __init__(self):
         """
         The Bot class is instantiated in boot.py, and therefore init is called. It is assumed that the robot
@@ -21,16 +31,21 @@ class Bot:
 
 
         self.pen_up = False
-        self.pen_zero = None
-        self.pen_loc = None
+
+        
+
+
 
     def zero_X(self):
+        """This method sets loc_x to 0."""
         self.loc_x=0
     
     def zero_Y(self):
+        """This method sets loc_y to 0."""
         self.loc_y=0
 
     
+
     def zero_pen(self,abs_servo_val):
         pass
 
@@ -41,16 +56,26 @@ class Bot:
         before the robot is zeroed.
 
         """
-        self.is_zero=(self.loc_x,self.loc_y,self.pen_zero,self.pen_loc) == (0,0,True,0)
+        self.is_zero = (self.loc_x,self.loc_y,self.pen_zero,self.pen_loc) == (0,0,True,0)
 
 
 
 
-    def teleop():
+    def go_to():
         """
         This method takes in data from the HTML User interface, and moves the robot. It is primarily used for
         testing purposes and also for zeroing the robot at the beginning of the 
         """
         pass
+    
+    
+    def pen_up():
+        """
+        This method moves or keeps the pen up.
+        """
 
     
+    def pen_up():
+        """
+        This method moves or keeps the pen down.
+        """
