@@ -17,6 +17,10 @@ esp.osdebug(None)
 import gc
 gc.collect()
 
+# Import the Bot class and create a new bot instance
+import bot
+robot=bot.Bot()
+
 import os
 f=open("esp-32-local/network.txt","r") # You will need to edit the contents of network.txt for your own network.
 network_info=dict(f.read())
