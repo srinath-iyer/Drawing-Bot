@@ -122,8 +122,21 @@ class Bot:
     # Bonus ---> Write a good docstring using the Google Convention for this method
     def set_direction(self):
         pass
+      
+    # TODO: Implement the logic for the method (if the Servo() object implementation works (see __init__ for more), then use the pertinent methods in here). 
+    # This is entirely dependent on how you decide to control the servo and its protocols, so there's not much more I can say here.
+    def pen_up(self):
+        """
+        This method moves or keeps the pen up.
+        """
 
-
+    # TODO: Implement the logic for the method (if the Servo() object implementation works (see __init__ for more), then use the pertinent methods in here). 
+    # This is entirely dependent on how you decide to control the servo and its protocols, so there's not much more I can say here.
+    def pen_down(self):
+        """
+        This method moves or keeps the pen down.
+        """
+    
     # BIG TODO: As a start, familiarize yourself with the Bresenham's Line Algorithm (Google this), and think about what variables/states matter
     # Let's do this method together, because it involves a lot of method calling, logic, and math and also should be written really cleanly.
     def go_to(self, x: float, y: float):
@@ -139,18 +152,22 @@ class Bot:
                 None
         """
         pass
-  
-    
-    # TODO: Implement the logic for the method (if the Servo() object implementation works (see __init__ for more), then use the pertinent methods in here). 
-    # This is entirely dependent on how you decide to control the servo and its protocols, so there's not much more I can say here.
-    def pen_up(self):
-        """
-        This method moves or keeps the pen up.
-        """
 
-    # TODO: Implement the logic for the method (if the Servo() object implementation works (see __init__ for more), then use the pertinent methods in here). 
-    # This is entirely dependent on how you decide to control the servo and its protocols, so there's not much more I can say here.
-    def pen_down(self):
+    # TODO: Implement this method. Not much more guidance here, you should develop the method and logic yourself. The hint is to use some sort of 
+    # while looping.
+    def auto_zero(self):
         """
-        This method moves or keeps the pen down.
+        This method automatically zeros the robot X and Y axis. 
+        
+        Can be selected by the user in the Robot interface if manual zeroing is not preferred.
+
+        Args:
+            None
+
+        Returns:
+            None
+
+
         """
+        pass
+
