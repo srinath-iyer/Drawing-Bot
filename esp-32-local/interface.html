@@ -7,43 +7,182 @@
     <title>Plotter Interface</title>
     <link rel="stylesheet" href="./style.css">
     <link rel="icon" href="./favicon.ico" type="image/x-icon">
+    <style>
+      .bot-runners-container{
+        position: fixed;
+        top: 175px;
+        left: 200px;
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        width: 300px;
+        height: 50px;
+      }
+
+      .bot-runners-container button{
+        margin: 5px;
+        
+      }
+
+
+      .bot-location-container {
+          position: fixed; /* Positions the container itself absolutely */
+          top: 425px;           /* Adjust as needed */
+          left: 200px;           /* Adjust as needed */
+          display: flex;
+          flex-direction: column; /* Stacks the items vertically */
+          align-items: flex-start; /* Left-aligns items within the flex container */
+          width: 250px;       /* Set a width to control the line breaks */
+        }
+
+        /* Optional styling for headers and paragraphs */
+        .bot-location-container h2, .bot-location-container p {
+          margin: 5px 0; /* Adds some space between elements */
+        }
+
+        .message-box{
+          position: fixed;
+          top: 535px;
+          left:0px;
+          display: flex;
+          flex-direction: column;
+          align-items: flex-start;
+          background-color: lightgrey;
+          width: 100%;
+          height: 150px;
+
+        }
+
+        .message-box h3{
+          margin-top: 10px;
+          margin-left: 10px;
+        }
+
+        .message-box p{
+          position: fixed;
+          top: 565px;
+          left: 10px;
+        }
+
+        .diamond-container {
+          position: fixed;
+          top: 425px;
+          left: 50px;
+          width: 100px;
+          height: 80px;
+          display: flex;
+          justify-content: center;
+          align-items: center;
+        }
+    
+        .diamond-container button{
+          position: absolute;
+        }
+    
+        .up {
+          top: 0;
+          left: 50%;
+          transform: translateX(-50%);
+        }
+    
+        .down {
+          bottom: 0;
+          left: 50%;
+          transform: translateX(-50%);
+        }
+    
+        .left {
+          left: 0;
+          top: 50%;
+          transform: translateY(-50%);
+        }
+    
+        .right {
+          right: 0;
+          top: 50%;
+          transform: translateY(-50%);
+        }
+
+        .emergency{
+          
+          padding: 15px 40px;
+          font-size: 18px;
+          background-color: red;
+          color: white;
+
+        }
+
+        .other_runners{
+          padding: 15px 30px;
+          font-size: 18px;
+          white-space: nowrap;
+          text-align: center;
+        }
+      </style>
   </head>
   <body>
     <main>
         <h1>Pen-Plotting Robot Interface</h1>
         <br></br>
+        <div class="space">
+
+        </div>
         <h2>Pen Up/Down</h2>
         <p id="pen_status">Current Status: </p>
         <button type="button" onclick="pen_up(true);get_pen_val()">Pen Up</button><br></br>
         <button type="button" onclick="pen_up(false);get_pen_val()">Pen Down</button>
 
         <h2>Teleop Mode: Manually control the robot</h2>
-        <h3>Select Number of Steps:</h3>
+        <h3>Select Number of Steps and Click the Direction Buttons:</h3>
         <form>
-             <label for="quantity">Select a number between 1 and 200:</label>
-             <input type="number" step="1" name = "steps" id = "steps" min = "1" max = "200" onchange="change_steps(this.value)">
+             <label for="quantity">Select steps (between 1 and 2000):</label>
+             <input type="number" step="1" name = "steps" id = "steps" min = "1" max = "2000">
         </form>
         <br></br>
 
-        <button type="button">Click Me!</button>  
+        
+      </head>
+      
+        <div class="diamond-container">
+          <button class="up" onclick="teleop_button('0', document.getElementById('steps').value)">+Y</button>
+          <button class="down" onclick="console.log('1',document.getElementById('steps').value)">-Y</button>
+          <button class="left" onclick="console.log('2',document.getElementById('steps').value)">-X</button>
+          <button class="right" onclick="console.log('3',document.getElementById('steps').value)">+X</button>
+        </div>
+
+        <div class="bot-location-container">
+          <h2>Bot Location Status</h2>
+          <p id="loc_x">X Location: N/A</p>
+          <p id="loc_y">Y Location: N/A</p>
+  
+        </div>
+
+        <div class="bot-runners-container">
+          <button class="emergency" onclick="console.log('Up')">Stop</button>
+          <button class="other_runners" onclick="console.log('Down')">Auto-Home</button>
+          <button class="other_runners" onclick="console.log('Down')">Enable</button>
+          <button class="other_runners" onclick="console.log('Left')">Start</button>
+
+        </div>
+
+        <div class="message-box">
+          <h3>Messages Box:</h3>
+          <p id="messages">Click here for more information about the robot and the interface</p>
+        </div>
+
+
     </main>
     <script>
     var x = ""
-    function change_steps(value){
-      fetch('/?led=' + value)
-          .then(response => response.text())
-          .then(data => console.log('LED updated to: ' + value));
-        
-    }
-
+    var status = ""
     function pen_up(value){
-      fetch('/?pen-up='+value).then(response => response.text()).then(data => alert("value is " + value));
+      fetch('/?pen-up='+value).then(response => response.text()).then(data => console.log("value is " + value));
       x=value
 
     }
 
     function get_pen_val(){
-      fetch("/?pen-up") .then(response => response.text())
+      fetch("/?pen-up").then(response => response.text())
       .then(status => {
         // Update the HTML to show the current pen status
         const statusElement = document.getElementById('pen_status');
@@ -51,11 +190,24 @@
       })
     }
 
-    
+    function updateStatus() {
+            fetch('/status')
+                .then(response => response.json())
+                .then(data => {
+                    if (data) {
+                        document.getElementById('loc_x').textContent = "X Location: " + (data.loc_x || "N/A");
+                        document.getElementById('loc_y').textContent = "Y Location: " + (data.loc_y || "N/A");
+                        document.getElementById('messages').textContent = data.messages || "No new messages";
+                    }
+                });
+        }
+
+        // Fetch and update robot status every second
+        setInterval(updateStatus, 100);
 
 
 
-    window.onload = pen_up(true);
+    window.onload = pen_up(true); 
 
 
 

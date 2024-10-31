@@ -21,7 +21,7 @@ s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 s.bind(('', 80))
 s.listen(5)
 
-while not robot.get_XY_zeroed():
+while not robot.is_robot_zeroed():
   conn, addr = s.accept()
   print('Got a connection from %s' % str(addr))
   request = conn.recv(1024)
