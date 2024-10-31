@@ -17,14 +17,27 @@ class Bot:
     DIRECTION_X_PIN = None
     STEP_X_PIN = None
     ENABLE_X_PIN = None
+
     DIRECTION_Y_PIN = None
     STEP_Y_PIN = None
     ENABLE_Y_PIN = None
+
     SERVO_PIN = None
+
     LIMIT_SWITCH_X = None
     LIMIT_SWITCH_Y = None
+    LIMIT_CLOSED = 0
+    LIMIT_OPEN = 1
+
+    STEPPER_SPEED = 0.001
 
 
+
+    PULLEY_CIRCUM = None
+
+    STEPS_PER_REV = None
+
+    STEP_DISTANCE = PULLEY_CIRCUM/STEPS_PER_REV
 
 
     # TODO: Test the Servo() implementation with a breadboard and the ESP-32. Use the https://pypi.org/project/micropython-servo/ docs to help
@@ -49,14 +62,20 @@ class Bot:
         self.loc_y = None
         self.pen_state = None # True -> Pen Down, False -> Pen Up
 
-        # Create Pin Objects:
+        # Stepper_X
         self.direction_x = Pin(self.DIRECTION_X_PIN, Pin.OUT)
         self.step_x = Pin(self.STEP_X_PIN, Pin.OUT)
         self.enable_x = Pin(self.ENABLE_X_PIN, Pin.OUT)
+
+        # Stepper_Y
         self.direction_y = Pin(self.DIRECTION_Y_PIN, Pin.OUT)
         self.step_y = Pin(self.STEP_Y_PIN, Pin.OUT)
         self.enable_y = Pin(self.ENABLE_Y_PIN, Pin.OUT)
+
+        # Servo
         self.pen_servo = Servo(self.SERVO_PIN)
+
+        #Limit switches
         self.limit_switch_x = Pin(self.LIMIT_SWITCH_X, Pin.IN)
         self.limit_switch_y = Pin(self.LIMIT_SWITCH_Y, Pin.IN)
 
@@ -120,7 +139,7 @@ class Bot:
     # TODO: Implement the set_direction method, which will take in the pin id (ex. `direction_x`) that suggests which motor we're reversing, and the value (a 1 or 0).
     # As a modifier method, it would look something like, where pin_object is for example, `direction_x` and value_given is a function parameter: pin_object.value(value_given)
     # Bonus ---> Write a good docstring using the Google Convention for this method
-    def set_direction(self):
+    def set_direction(self, direction_pin: Pin):
         pass
       
     # TODO: Implement the logic for the method (if the Servo() object implementation works (see __init__ for more), then use the pertinent methods in here). 
@@ -153,6 +172,9 @@ class Bot:
         """
         pass
 
+    def telelop(self, direction: int, steps: int):
+        pass
+
     # TODO: Implement this method. Not much more guidance here, you should develop the method and logic yourself. The hint is to use some sort of 
     # while looping.
     def auto_zero(self):
@@ -169,5 +191,93 @@ class Bot:
 
 
         """
-        pass
+
+        # while limit switch X = low:
+            # move towards direction of limit switch X
+
+        # while limit switch Y = low:
+            # move towards direction of limit switch Y
+
+
+        #According to ChatGPT, limit switches send 0 when pressed (closed), and 1 when not pressed (open)
+        #LIMIT_OPEN = 0
+        while self.limit_switch_x == self.LIMIT_OPEN:
+            self.stepOne_X(1) #move stepper X in direction of limit switch
+        while self.limit_switch_y == self.LIMIT_OPEN:
+            self.stepOne_Y(1) #move stepper Y in direction of limit switch
+
+        self.zero_X()
+        self.zero_Y()
+
+    
+    
+    
+    def stepOne_X(self, direction: int):
+        """
+        This method moves the bot one step in the X direction.
+
+        Args:
+            Direction (clockwise or counter-clockwise)
+
+        Returns:
+            None
+        """
+        self.direction_x = direction #Set direction
+
+        self.step_x.value(1) #Move step
+        utime.sleep(self.STEPPER_SPEED)
+        self.step_x.value(0)
+
+    
+    def stepOne_Y(self, direction: int):
+        """
+        This method moves the bot one step in the Y direction.
+
+        Args:
+            Direction (clockwise or counter-clockwise)
+
+        Returns:
+            None
+        """
+        self.direction_y = direction #Set direction
+
+        self.step_y.value(1) #Move step
+        utime.sleep(self.STEPPER_SPEED)
+        self.step_y.value(0)
+
+        
+    def update_loc_x(self, direction: int): #update loc_x based on whether motor is moving clockwise/counter-clockwise
+        """
+        This method updates the X location of the robot based on the direction.
+
+        Args:
+            Direction(clockwise or counter-clockwise)
+
+        Returns:
+            None
+        """
+        #This stuff should be corrected later once we know whether direction_x == 1 means clockwise or counter
+        if self.direction_x == 1:
+            self.loc_x -= self.STEP_DISTANCE 
+        elif self.direction_x == 0:
+            self.loc_x += self.STEP_DISTANCE
+            
+    
+    def update_loc_y(self, direction: int): #update loc_y based on whether motor is moving clockwise/counter-clockwise
+        """
+        This method updates the Y location of the robot based on the direction.
+
+        Args:
+            Direction (clockwise or counter-clockwise)
+
+        Returns:
+            None
+        """
+        #This stuff should be corrected later once we know whether direction_y == 1 means clockwise or counter
+        if self.direction_y == 1:
+            self.loc_x -= self.STEP_DISTANCE
+        elif self.direction_y == 0:
+            self.loc_x += self.STEP_DISTANCE
+
+
 
