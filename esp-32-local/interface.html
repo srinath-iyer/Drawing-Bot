@@ -8,10 +8,26 @@
     <link rel="stylesheet" href="./style.css">
     <link rel="icon" href="./favicon.ico" type="image/x-icon">
     <style>
+      .help-container{
+        position: fixed;
+        top: 25px;
+        left: 90%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        width: 70px;
+        height: 50px;
+        background-color: lightgray;
+      }
+
+      .help-container p{
+        text-align: center;
+      }
+
       .bot-runners-container{
         position: fixed;
-        top: 175px;
-        left: 200px;
+        top: 75px;
+        left: 2px;
         display: flex;
         flex-direction: row;
         align-items: center;
@@ -124,8 +140,8 @@
     <main>
         <h1>Pen-Plotting Robot Interface</h1>
         <br></br>
-        <div class="space">
-
+        <div class="help-container">
+          <p><a href = "https://github.com/srinath-iyer/Pen-Plotting-Bot" target="_blank">Help</a></p>
         </div>
         <h2>Pen Up/Down</h2>
         <p id="pen_status">Current Status: </p>
@@ -145,9 +161,9 @@
       
         <div class="diamond-container">
           <button class="up" onclick="teleop_button('0', document.getElementById('steps').value)">+Y</button>
-          <button class="down" onclick="console.log('1',document.getElementById('steps').value)">-Y</button>
-          <button class="left" onclick="console.log('2',document.getElementById('steps').value)">-X</button>
-          <button class="right" onclick="console.log('3',document.getElementById('steps').value)">+X</button>
+          <button class="down" onclick="teleop_button('1',document.getElementById('steps').value)">-Y</button>
+          <button class="left" onclick="teleop_button('2',document.getElementById('steps').value)">-X</button>
+          <button class="right" onclick="teleop_button('3',document.getElementById('steps').value)">+X</button>
         </div>
 
         <div class="bot-location-container">
@@ -167,7 +183,7 @@
 
         <div class="message-box">
           <h3>Messages Box:</h3>
-          <p id="messages">Click here for more information about the robot and the interface</p>
+          <p id="messages">Click <a href = "https://github.com/srinath-iyer/Pen-Plotting-Bot" target="_blank">here</a> for more information about the robot and the interface</p>
         </div>
 
 
@@ -176,7 +192,7 @@
     var x = ""
     var status = ""
     function pen_up(value){
-      fetch('/?pen-up='+value).then(response => response.text()).then(data => console.log("value is " + value));
+      fetch('/pen-up').then(response => response.text()).then(data => console.log("value is " + value));
       x=value
 
     }
@@ -203,11 +219,7 @@
         }
 
         // Fetch and update robot status every second
-        setInterval(updateStatus, 100);
-
-
-
-    window.onload = pen_up(true); 
+        setInterval(updateStatus, 100)
 
 
 
