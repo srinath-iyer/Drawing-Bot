@@ -60,7 +60,7 @@ class Bot:
         self.is_zero = False # Note: This variable is treated as a final variable after it evaluates to True because it will never be changed again in main.py after being zeroed.
         self.loc_x = None
         self.loc_y = None
-        self.pen_state = None # True -> Pen Down, False -> Pen Up
+        self.pen_state = True # True -> Pen Down, False -> Pen Up
 
         # Stepper_X
         self.direction_x = Pin(self.DIRECTION_X_PIN, Pin.OUT)
@@ -74,10 +74,15 @@ class Bot:
 
         # Servo
         self.pen_servo = Servo(self.SERVO_PIN)
-
+        self.pen_servo.off()
+        self.pen_servo.write(45)
+        self.pen_state = False
+        
         #Limit switches
         self.limit_switch_x = Pin(self.LIMIT_SWITCH_X, Pin.IN)
         self.limit_switch_y = Pin(self.LIMIT_SWITCH_Y, Pin.IN)
+
+
 
         
 
@@ -148,6 +153,13 @@ class Bot:
         """
         This method moves or keeps the pen up.
         """
+        if self.pen_state:
+            self.pen_servo.write(45)
+        self.pen_state = False
+
+
+
+
 
     # TODO: Implement the logic for the method (if the Servo() object implementation works (see __init__ for more), then use the pertinent methods in here). 
     # This is entirely dependent on how you decide to control the servo and its protocols, so there's not much more I can say here.
@@ -155,6 +167,9 @@ class Bot:
         """
         This method moves or keeps the pen down.
         """
+        if not self.pen_state:
+            self.pen_servo.off()
+        self.pen_state = True
     
     # BIG TODO: As a start, familiarize yourself with the Bresenham's Line Algorithm (Google this), and think about what variables/states matter
     # Let's do this method together, because it involves a lot of method calling, logic, and math and also should be written really cleanly.
