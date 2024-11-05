@@ -43,9 +43,9 @@ class Bot:
 
     DISTANCE_PER_STEP = PULLEY_CIRCUM/STEPS_PER_REV # 0.2 mm
 
-    ACCEPTABLE_ERROR = 0.15
+    ACCEPTABLE_ERROR = DISTANCE_PER_STEP
 
-    ACCEPTABLE_ERROR_SQRD = 0.15 * 0.15
+    ACCEPTABLE_ERROR_SQRD = DISTANCE_PER_STEP**2
 
     # TODO: Test the Servo() implementation with a breadboard and the ESP-32. Use the https://pypi.org/project/micropython-servo/ docs to help
     def __init__(self):
@@ -197,9 +197,11 @@ class Bot:
 
         slope = 0
 
-
-        while ((x - self.loc_x)**2 + (y - self.loc_y)**2) > self.ACCEPTABLE_ERROR_SQRD: # while distance squared is greater than acceptable error squared
-            x_steps = (x-self.loc_x) / self.DISTANCE_PER_STEP # number of steps in x direction required
+        delta_x = (x - self.loc_x)
+        delta_y = (y-self.loc_y)
+        while (delta_x**2 + delta_y**2 > self.ACCEPTABLE_ERROR_SQRD): # while distance squared is greater than acceptable error squared
+            x_steps = delta_x / self.DISTANCE_PER_STEP # number of steps in x direction required
+            y_steps = delta_y / self.DISTANCE_PER_STEP
 
             #**************WRITE EDGE CASE FOR IF DX = 0*********
 
