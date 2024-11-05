@@ -11,6 +11,8 @@ import utime
 
 from servo import Servo
 
+from math import math
+
 class Bot:
     
     # Constants:
@@ -37,8 +39,13 @@ class Bot:
 
     STEPS_PER_REV = None
 
-    STEP_DISTANCE = PULLEY_CIRCUM/STEPS_PER_REV
+    # Following constants are in mm
 
+    DISTANCE_PER_STEP = PULLEY_CIRCUM/STEPS_PER_REV # 0.2 mm
+
+    ACCEPTABLE_ERROR = 0.15
+
+    ACCEPTABLE_ERROR_SQRD = 0.15 * 0.15
 
     # TODO: Test the Servo() implementation with a breadboard and the ESP-32. Use the https://pypi.org/project/micropython-servo/ docs to help
     def __init__(self):
@@ -153,7 +160,7 @@ class Bot:
         """
         This method moves or keeps the pen up.
         """
-        if self.pen_state:
+        if self.pen_state: # true = pen down
             self.pen_servo.write(45)
         self.pen_state = False
 
@@ -167,13 +174,13 @@ class Bot:
         """
         This method moves or keeps the pen down.
         """
-        if not self.pen_state:
+        if not self.pen_state: # if pen is up
             self.pen_servo.off()
         self.pen_state = True
     
     # BIG TODO: As a start, familiarize yourself with the Bresenham's Line Algorithm (Google this), and think about what variables/states matter
     # Let's do this method together, because it involves a lot of method calling, logic, and math and also should be written really cleanly.
-    def go_to(self, x: float, y: float):
+    def go_to_default(self, x: float, y: float):
         """
         This method takes in data from the HTML User interface, and moves the robot. It is primarily used for
         testing purposes and also for zeroing the robot at the beginning of the 
@@ -185,6 +192,46 @@ class Bot:
             Returns:
                 None
         """
+        # Option 1: default, use slope while continuously updating
+        # Option 2: 
+
+        slope = 0
+
+
+        while ((x - self.loc_x)**2 + (y - self.loc_y)**2) > self.ACCEPTABLE_ERROR_SQRD: # while distance squared is greater than acceptable error squared
+            x_steps = (x-self.loc_x) / self.DISTANCE_PER_STEP # number of steps in x direction required
+
+            #**************WRITE EDGE CASE FOR IF DX = 0*********
+
+            for i in range(x_steps): 
+                slope = round(y-self.loc_y) / (x-self.loc_x)
+
+                if x-self.loc_x < 0: # if dx < 0, moving from right to left in x direction
+                    self.stepOne_X(null)
+                    self.update_loc_x(null)
+                elif x-self.loc_x > 0: # if dx >, moving from left to right in x direction
+                    self.stepOne_X()
+                    self.update_loc_y(null)
+
+                # move x
+                # find slope, and then round it
+                # each time x is incremented, increment y by slope
+                
+                for j in range(slope): # for every x increment, move y by this much (slope)
+
+                    if y-self.loc_x < 0: # if dy < 0, moving from right to left in x direction
+                        self.stepOne_X(null)
+                        self.update_loc_x(null)
+                    elif x-self.loc_x > 0: # if dx >, moving from left to right in x direction
+                        self.stepOne_X()
+                        self.update_loc_y(null)
+
+
+        pass
+    
+
+
+    def go_to_bresenham(self, x: float, y: float):
         pass
 
     def telelop(self, direction: int, steps: int):
@@ -273,9 +320,9 @@ class Bot:
         """
         #This stuff should be corrected later once we know whether direction_x == 1 means clockwise or counter
         if self.direction_x == 1:
-            self.loc_x -= self.STEP_DISTANCE 
+            self.loc_x -= self.DISTANCE_PER_STEP 
         elif self.direction_x == 0:
-            self.loc_x += self.STEP_DISTANCE
+            self.loc_x += self.DISTANCE_PER_STEP
             
     
     def update_loc_y(self, direction: int): #update loc_y based on whether motor is moving clockwise/counter-clockwise
@@ -290,9 +337,9 @@ class Bot:
         """
         #This stuff should be corrected later once we know whether direction_y == 1 means clockwise or counter
         if self.direction_y == 1:
-            self.loc_x -= self.STEP_DISTANCE
+            self.loc_x -= self.DISTANCE_PER_STEP
         elif self.direction_y == 0:
-            self.loc_x += self.STEP_DISTANCE
+            self.loc_x += self.DISTANCE_PER_STEP
 
 
 
