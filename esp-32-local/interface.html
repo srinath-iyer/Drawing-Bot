@@ -145,8 +145,8 @@
         </div>
         <h2>Pen Up/Down</h2>
         <p id="pen_status">Current Status: </p>
-        <button type="button" onclick="pen_up(true);get_pen_val()">Pen Up</button><br></br>
-        <button type="button" onclick="pen_up(false);get_pen_val()">Pen Down</button>
+        <button type="button" onclick="pen_up(true)">Pen Up</button><br></br>
+        <button type="button" onclick="pen_up(false)">Pen Down</button>
 
         <h2>Teleop Mode: Manually control the robot</h2>
         <h3>Select Number of Steps and Click the Direction Buttons:</h3>
@@ -174,10 +174,10 @@
         </div>
 
         <div class="bot-runners-container">
-          <button class="emergency" onclick="console.log('Up')">Stop</button>
-          <button class="other_runners" onclick="console.log('Down')">Auto-Home</button>
-          <button class="other_runners" onclick="console.log('Down')">Enable</button>
-          <button class="other_runners" onclick="console.log('Left')">Start</button>
+          <button class="emergency" onclick="e_stop()">Stop</button>
+          <button class="other_runners" onclick="auto_home()">Auto-Home</button>
+          <button class="other_runners" onclick="enable()">Enable</button>
+          <button class="other_runners" onclick="start_script()">Start</button>
 
         </div>
 
@@ -189,37 +189,60 @@
 
     </main>
     <script>
-    var x = ""
-    var status = ""
+
+    // Parametrized functions: Functions that take in data/output data based on user-defined parameters.
     function pen_up(value){
       fetch('/pen-up').then(response => response.text()).then(data => console.log("value is " + value));
-      x=value
 
     }
 
-    function get_pen_val(){
-      fetch("/?pen-up").then(response => response.text())
-      .then(status => {
-        // Update the HTML to show the current pen status
-        const statusElement = document.getElementById('pen_status');
-        statusElement.textContent = 'Current Status: ' + x
-      })
+    function teleop_button(value){
+
     }
 
-    function updateStatus() {
+    function updateStatus() { // Gets the status of the robot by sending a request to /status. Gets Loc and Pen State, as well as any messages
             fetch('/status')
                 .then(response => response.json())
                 .then(data => {
                     if (data) {
                         document.getElementById('loc_x').textContent = "X Location: " + (data.loc_x || "N/A");
                         document.getElementById('loc_y').textContent = "Y Location: " + (data.loc_y || "N/A");
+                        document.getElementById('pen_status').textContent = "Current Status: " + (data.pen_status || "N/A");
                         document.getElementById('messages').textContent = data.messages || "No new messages";
                     }
                 });
         }
 
-        // Fetch and update robot status every second
+
+        // Fetch and update robot status to times every second
         setInterval(updateStatus, 100)
+
+    
+    // Commands: No parameters taken in
+
+    function e_stop(){
+
+    }
+
+    function auto_home(){
+
+    }
+
+    function enable(){
+
+    }
+
+    function start_script(){
+
+    }
+
+    // Mutators: Change the Interface HTML based on some information
+
+    function control_buttons(){
+
+    }
+
+    setInterval(control_buttons, 1000) // Check the button status every second
 
 
 

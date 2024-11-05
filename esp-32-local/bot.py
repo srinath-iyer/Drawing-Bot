@@ -29,7 +29,7 @@ class Bot:
     LIMIT_CLOSED = 0
     LIMIT_OPEN = 1
 
-    STEPPER_SPEED = 0.001
+    STEPPER_DELAY = 0.001
 
 
 
@@ -240,7 +240,7 @@ class Bot:
         self.direction_x = direction #Set direction
 
         self.step_x.value(1) #Move step
-        utime.sleep(self.STEPPER_SPEED)
+        utime.sleep(self.STEPPER_DELAY)
         self.step_x.value(0)
 
     
@@ -257,7 +257,7 @@ class Bot:
         self.direction_y = direction #Set direction
 
         self.step_y.value(1) #Move step
-        utime.sleep(self.STEPPER_SPEED)
+        utime.sleep(self.STEPPER_DELAY)
         self.step_y.value(0)
 
         
