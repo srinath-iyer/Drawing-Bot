@@ -8,12 +8,7 @@ import script
 import bot
 
 
-def web_page():
-  if led.value() == 1:
-    gpio_state="ON"
-  else:
-    gpio_state="OFF"
-  
+def web_page(): 
   html = open("interface.html","r").read()
   return html
 

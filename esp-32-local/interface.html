@@ -160,10 +160,10 @@
       </head>
       
         <div class="diamond-container">
-          <button class="up" onclick="teleop_button('0', document.getElementById('steps').value)">+Y</button>
-          <button class="down" onclick="teleop_button('1',document.getElementById('steps').value)">-Y</button>
-          <button class="left" onclick="teleop_button('2',document.getElementById('steps').value)">-X</button>
-          <button class="right" onclick="teleop_button('3',document.getElementById('steps').value)">+X</button>
+          <button class="up" onclick="teleop_button('0', document.getElementById('steps').value  || 0)">+Y</button>
+          <button class="down" onclick="teleop_button('1',document.getElementById('steps').value || 0)">-Y</button>
+          <button class="left" onclick="teleop_button('2',document.getElementById('steps').value || 0)">-X</button>
+          <button class="right" onclick="teleop_button('3',document.getElementById('steps').value || 0)">+X</button>
         </div>
 
         <div class="bot-location-container">
@@ -196,12 +196,12 @@
 
     }
 
-    function teleop_button(value){
-
+    function teleop_button(value, steps){
+      fetch(`/teleop-button?id=${value}&steps=${steps}`).then(response => response.text()).then(data => console.log("Button"));
     }
 
     function updateStatus() { // Gets the status of the robot by sending a request to /status. Gets Loc and Pen State, as well as any messages
-            fetch('/status')
+            fetch('/status', {method: 'GET'})
                 .then(response => response.json())
                 .then(data => {
                     if (data) {
@@ -221,19 +221,20 @@
     // Commands: No parameters taken in
 
     function e_stop(){
-
+      fetch('/e-stop')
     }
 
     function auto_home(){
+      fetch('/auto-home')
 
     }
 
     function enable(){
-
+      fetch('/enable')
     }
 
     function start_script(){
-
+      fetch('/start-script')
     }
 
     // Mutators: Change the Interface HTML based on some information
