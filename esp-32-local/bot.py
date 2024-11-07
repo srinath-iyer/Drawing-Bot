@@ -183,7 +183,7 @@ class Bot:
     
     # BIG TODO: As a start, familiarize yourself with the Bresenham's Line Algorithm (Google this), and think about what variables/states matter
     # Let's do this method together, because it involves a lot of method calling, logic, and math and also should be written really cleanly.
-    def go_to_default(self, x: float, y: float):
+    def go_to(self, x: float, y: float):
         """
         This method takes in data from the HTML User interface, and moves the robot. It is primarily used for
         testing purposes and also for zeroing the robot at the beginning of the 
@@ -239,28 +239,38 @@ class Bot:
 
         slope = 0
 
-        delta_x = (x - self.loc_x)
-        delta_y = (y-self.loc_y)
-
         while (delta_x**2 + delta_y**2 > self.ACCEPTABLE_ERROR_SQRD):
-            slope = abs(delta_y/delta_x)
+
+            # Calculate Deltas
+            delta_x = (x - self.loc_x)
+            delta_y = (y-self.loc_y)
+
+            # Handle direction changes
+            if delta_x < 0:
+                self.set_direction(self.direction_x,(int)(not self.direction_x.value())) # If the delta x is negative, simply reverse the direction_x pin value
+                delta_x = abs(delta_x)
+            if delta_y < 0:
+                self.set_direction(self.direction_y,(int)(not self.direction_y.value())) # If the delta y is negative, simply reverse the direction_y pin value
+                delta_y=abs(delta_y)
+
+
+            # Edge Case
+            elif delta_x==0: # Edge case, since the slope will be undefined.
+                for i in range(round(delta_y)):
+                    self.stepOne_Y()
+                    self.update_loc_y()
+                    pass # Skip the remaining iteration of this loop.
+
+            
+            # Regular Algorithm
+            slope = delta_y/delta_x # Slope = Rise/Run
 
 
             if slope >= 1:
-                for i in range(round(slope)): 
-                    # set direction y
-                    if delta_y < 0:
-                        self.set_direction(null, null)
-                    else: self.set_direction(null, null)
-
+                for i in range(round(slope)):
                     # move y
                     self.stepOne_Y()
                     self.update_loc_y()
-                
-                # set direction x
-                if delta_x < 0:
-                    self.set_direction(null, null)
-                else: self.set_direction(null, null)
                 
                 # move x
                 self.stepOne_X()
@@ -270,27 +280,12 @@ class Bot:
                 slope = 1/slope
 
                 for i in range(round(slope)):
-                    # set direction x
-                    if delta_x < 0:
-                        self.set_direction(null, null)
-                    else: self.set_direction(null, null)
-
-                    # move x
                     self.stepOne_X()
                     self.update_loc_x()
-
-                # set direction y
-                if delta_y < 0:
-                    self.set_direction(null, null)
-                else: self.set_direction(null, null)
 
                 # move y
                 self.stepOne_Y()
                 self.update_loc_y()
-
-            # update dx and dy vars
-            delta_x = (x - self.loc_x)
-            delta_y = (y-self.loc_y)
 
 
 
@@ -405,6 +400,7 @@ class Bot:
     #TODO: Implement get_status that returns a JSON about the robot state.
     def get_status():
         pass
+
 
 
 
