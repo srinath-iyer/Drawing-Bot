@@ -238,7 +238,8 @@ class Bot:
         
 
         slope = 0
-
+        delta_x = (x - self.loc_x)
+        delta_y = (y-self.loc_y)
         while (delta_x**2 + delta_y**2 > self.ACCEPTABLE_ERROR_SQRD):
 
             # Calculate Deltas
