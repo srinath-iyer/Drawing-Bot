@@ -47,6 +47,10 @@ class Bot:
 
     ACCEPTABLE_ERROR_SQRD = DISTANCE_PER_STEP**2
 
+    # Conversion from inches to mm
+    MAX_X_LOC = 8*25.4
+    MAX_Y_LOC = 11.5*25.4
+
     # TODO: Test the Servo() implementation with a breadboard and the ESP-32. Use the https://pypi.org/project/micropython-servo/ docs to help
     def __init__(self):
         """
@@ -294,6 +298,16 @@ class Bot:
         pass
 
     def teleop(self, direction: int, steps: int):
+        """
+        This method allows users to manually control and move the robot a user-specified number of steps in a certain direction.
+        
+        Args:
+            direction (int): The desired direction (x or y)
+            steps (int): The desired number of steps
+
+        Returns:
+            None
+        """
         pass
 
     # TODO: Implement this method. Not much more guidance here, you should develop the method and logic yourself. The hint is to use some sort of 
