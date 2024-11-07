@@ -1,39 +1,81 @@
-
-
-# Create a webpage: This code template/starting is sourced to https://randomnerdtutorials.com/esp32-esp8266-micropython-web-server/
-
-import os
+import uasyncio as asyncio
+import bot
+from bot import Bot
 import script
 
-import bot
+robot = Bot()
 
-
+# Define the handle_request function that will process incoming requests
 def web_page(): 
   html = open("interface.html","r").read()
   return html
 
-s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-s.bind(('', 80))
-s.listen(5)
+async def handle_request(reader, writer):
+    new_messages = "" # If something notable happens, we add the 
+    try:
+        # Read the request (up to 1024 bytes)
+        request = await reader.read(1024)
+        request = request.decode('utf-8')
+        if '/status' in request:
+            print("status")
+            std_messages = robot.get_status()
+            std_messages[""]
+        elif '/enable' in request:
+            print("ENABLE")
+            robot.enable()
+            response = "Robot is enabled" if robot.enabled else "Error in enabling"
+            
+        elif '/e-stop' in request:
+            robot.disable()
+            response = "Robot has been disabled. If you were mid-script, you will need to start over."
 
-while not robot.is_robot_zeroed():
-  conn, addr = s.accept()
-  print('Got a connection from %s' % str(addr))
-  request = conn.recv(1024)
-  request = str(request)
-  print('Content = %s' % request)
-  led_on = request.find('/?led=on')
-  led_off = request.find('/?led=off')
-  if led_on == 6:
-    print('LED ON')
-    led.value(1)
-  if led_off == 6:
-    print('LED OFF')
-    led.value(0)
-  response = web_page()
-  conn.send('HTTP/1.1 200 OK\n')
-  conn.send('Content-Type: text/html\n')
-  conn.send('Connection: close\n\n')
-  conn.sendall(response)
-  conn.close()
-  
+        elif '/auto-home' in request:
+            robot.auto_zero()
+            reponse = "Robot is zeroed" if robot.is_robot_zero else "That didn't work. Try again."
+
+        elif '/start-script' in request: # This one is complicated; we have to call the main() in script.py
+            if(robot.is_robot_zero() and robot.enabled):
+                if hasattr(script, 'main'):
+                    script.main()
+                else:
+                    response = "script.py does not have a main method."
+
+        elif '/teleop-button' in request: # string parsing; do this later.
+            pass
+
+        elif '/' in request:  # Default route to serve the main HTML page
+            # Read the HTML content from the file
+            response = web_page()
+        
+        # Prepare the HTTP response
+        header = 'HTTP/1.1 200 OK\r\nContent-Type: text/html\r\n\r\n'
+        full_response = header + response
+        
+        # Send the response
+        writer.write(full_response.encode('utf-8'))
+        await writer.drain()
+    except Exception as e:
+        print("Error handling request:", e)
+    finally:
+        writer.close()
+        await writer.wait_closed()
+
+# Start the server
+async def start_server():
+    # Start the server at '0.0.0.0' (any IP) and port 80
+    server = await asyncio.start_server(handle_request, '0.0.0.0', 80)
+    
+    print('Serving on port 80...')
+
+    # Instead of using `server.sockets`, we don't need to get the address explicitly
+    try:
+        while True:
+            await asyncio.sleep(3600)  # Keep the server running
+    except asyncio.CancelledError:
+        pass
+
+# Run the server
+try:
+    asyncio.run(start_server())
+except KeyboardInterrupt:
+    print("Server stopped")

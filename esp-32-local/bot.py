@@ -68,6 +68,7 @@ class Bot:
         self.loc_x = None
         self.loc_y = None
         self.pen_state = True # True -> Pen Down, False -> Pen Up
+        self.enabled = False
 
         # Stepper_X
         self.direction_x = Pin(self.DIRECTION_X_PIN, Pin.OUT)
@@ -138,8 +139,9 @@ class Bot:
         """
         self.enable_x.value(0)
         self.enable_y.value(0)
+        self.enabled = True
 
-    # TODO: We will need to discuss abotu error raising or other things with this method. This isn't all that important at the moment.
+    # TODO: We will need to discuss about error raising or other things with this method. This isn't all that important at the moment.
     def disable(self):
         """
         Used at the termination of a program, or called by the user in the case of an E-Stop
@@ -147,11 +149,12 @@ class Bot:
         self.enable_x.value(1)
         self.enable_y.value(1)
         self.pen_up()
+        self.enabled = False
 
     # TODO: Implement the set_direction method, which will take in the pin id (ex. `direction_x`) that suggests which motor we're reversing, and the value (a 1 or 0).
     # As a modifier method, it would look something like, where pin_object is for example, `direction_x` and value_given is a function parameter: pin_object.value(value_given)
     # Bonus ---> Write a good docstring using the Google Convention for this method
-    def set_direction(self, direction_pin: Pin):
+    def set_direction(self, direction_pin: Pin, value: int):
         pass
       
     # TODO: Implement the logic for the method (if the Servo() object implementation works (see __init__ for more), then use the pertinent methods in here). 
@@ -236,7 +239,7 @@ class Bot:
     def go_to_bresenham(self, x: float, y: float):
         pass
 
-    def telelop(self, direction: int, steps: int):
+    def teleop(self, direction: int, steps: int):
         pass
 
     # TODO: Implement this method. Not much more guidance here, you should develop the method and logic yourself. The hint is to use some sort of 
@@ -342,6 +345,10 @@ class Bot:
             self.loc_x -= self.DISTANCE_PER_STEP
         elif self.direction_y == 0:
             self.loc_x += self.DISTANCE_PER_STEP
+
+    #TODO: Implement get_status that returns a JSON about the robot state.
+    def get_status():
+        pass
 
 
 

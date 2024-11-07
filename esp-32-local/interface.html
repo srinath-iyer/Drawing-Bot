@@ -174,10 +174,10 @@
         </div>
 
         <div class="bot-runners-container">
-          <button class="emergency" onclick="e_stop()">Stop</button>
-          <button class="other_runners" onclick="auto_home()">Auto-Home</button>
-          <button class="other_runners" onclick="enable()">Enable</button>
-          <button class="other_runners" onclick="start_script()">Start</button>
+          <button id="stop" class="emergency" onclick="e_stop()">Stop</button>
+          <button id="auto-home" class="other_runners" onclick="auto_home()">Auto-Home</button>
+          <button id="enable" class="other_runners" onclick="enable()">Enable</button>
+          <button id="start_script" class="other_runners" onclick="start_script()">Start</button>
 
         </div>
 
@@ -208,14 +208,17 @@
                         document.getElementById('loc_x').textContent = "X Location: " + (data.loc_x || "N/A");
                         document.getElementById('loc_y').textContent = "Y Location: " + (data.loc_y || "N/A");
                         document.getElementById('pen_status').textContent = "Current Status: " + (data.pen_status || "N/A");
-                        document.getElementById('messages').textContent = data.messages || "No new messages";
+                        document.getElementById('messages').textContent = data.messages || document.getElementById('messages').textContent;
+                        if(data.enable == "disabled"){
+                          document.getElementById('enable').disabled=false;
+                        }
                     }
                 });
         }
 
 
-        // Fetch and update robot status to times every second
-        setInterval(updateStatus, 100)
+        // Fetch and update robot status to 5 times every second
+        setInterval(updateStatus, 200)
 
     
     // Commands: No parameters taken in
@@ -230,7 +233,12 @@
     }
 
     function enable(){
-      fetch('/enable')
+      fetch('/enable',{method:"POST"})
+        .then(response => response.text())
+          .then(data => {document.getElementById('messages').textContent = "Robot is enabled.";
+            document.getElementById("enable").disabled = true;
+          })
+          
     }
 
     function start_script(){
