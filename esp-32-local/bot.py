@@ -198,42 +198,100 @@ class Bot:
         # Option 1: default, use slope while continuously updating
         # Option 2: 
 
+
+
+        # slope = 0
+
+        # delta_x = (x - self.loc_x)
+        # delta_y = (y-self.loc_y)
+        # while (delta_x**2 + delta_y**2 > self.ACCEPTABLE_ERROR_SQRD): # while distance squared is greater than acceptable error squared
+        #     x_steps = delta_x / self.DISTANCE_PER_STEP # number of steps in x direction required
+        #     y_steps = delta_y / self.DISTANCE_PER_STEP
+
+        #     #**************WRITE EDGE CASE FOR IF DX = 0*********
+
+        #     for i in range(x_steps): 
+        #         slope = round(y-self.loc_y) / (x-self.loc_x)
+
+        #         if x-self.loc_x < 0: # if dx < 0, moving from right to left in x direction
+        #             self.stepOne_X(null)
+        #             self.update_loc_x(null)
+        #         elif x-self.loc_x > 0: # if dx >, moving from left to right in x direction
+        #             self.stepOne_X()
+        #             self.update_loc_y(null)
+
+        #         # move x
+        #         # find slope, and then round it
+        #         # each time x is incremented, increment y by slope
+                
+        #         for j in range(slope): # for every x increment, move y by this much (slope)
+
+        #             if y-self.loc_x < 0: # if dy < 0, moving from right to left in x direction
+        #                 self.stepOne_X(null)
+        #                 self.update_loc_x(null)
+        #             elif x-self.loc_x > 0: # if dx >, moving from left to right in x direction
+        #                 self.stepOne_X()
+        #                 self.update_loc_y(null)
+
+
+        # pass
+        
+
         slope = 0
 
         delta_x = (x - self.loc_x)
         delta_y = (y-self.loc_y)
-        while (delta_x**2 + delta_y**2 > self.ACCEPTABLE_ERROR_SQRD): # while distance squared is greater than acceptable error squared
-            x_steps = delta_x / self.DISTANCE_PER_STEP # number of steps in x direction required
-            y_steps = delta_y / self.DISTANCE_PER_STEP
 
-            #**************WRITE EDGE CASE FOR IF DX = 0*********
+        while (delta_x**2 + delta_y**2 > self.ACCEPTABLE_ERROR_SQRD):
+            slope = abs(delta_y/delta_x)
 
-            for i in range(x_steps): 
-                slope = round(y-self.loc_y) / (x-self.loc_x)
 
-                if x-self.loc_x < 0: # if dx < 0, moving from right to left in x direction
-                    self.stepOne_X(null)
-                    self.update_loc_x(null)
-                elif x-self.loc_x > 0: # if dx >, moving from left to right in x direction
-                    self.stepOne_X()
-                    self.update_loc_y(null)
+            if slope >= 1:
+                for i in range(round(slope)): 
+                    # set direction y
+                    if delta_y < 0:
+                        self.set_direction(null, null)
+                    else: self.set_direction(null, null)
 
-                # move x
-                # find slope, and then round it
-                # each time x is incremented, increment y by slope
+                    # move y
+                    self.stepOne_Y()
+                    self.update_loc_y()
                 
-                for j in range(slope): # for every x increment, move y by this much (slope)
+                # set direction x
+                if delta_x < 0:
+                    self.set_direction(null, null)
+                else: self.set_direction(null, null)
+                
+                # move x
+                self.stepOne_X()
+                self.update_loc_x()
 
-                    if y-self.loc_x < 0: # if dy < 0, moving from right to left in x direction
-                        self.stepOne_X(null)
-                        self.update_loc_x(null)
-                    elif x-self.loc_x > 0: # if dx >, moving from left to right in x direction
-                        self.stepOne_X()
-                        self.update_loc_y(null)
+            elif slope < 1:
+                slope = 1/slope
 
+                for i in range(round(slope)):
+                    # set direction x
+                    if delta_x < 0:
+                        self.set_direction(null, null)
+                    else: self.set_direction(null, null)
 
-        pass
-    
+                    # move x
+                    self.stepOne_X()
+                    self.update_loc_x()
+
+                # set direction y
+                if delta_y < 0:
+                    self.set_direction(null, null)
+                else: self.set_direction(null, null)
+
+                # move y
+                self.stepOne_Y()
+                self.update_loc_y()
+
+            # update dx and dy vars
+            delta_x = (x - self.loc_x)
+            delta_y = (y-self.loc_y)
+
 
 
     def go_to_bresenham(self, x: float, y: float):
@@ -279,34 +337,32 @@ class Bot:
     
     
     
-    def stepOne_X(self, direction: int):
+    def stepOne_X(self):
         """
         This method moves the bot one step in the X direction.
 
         Args:
-            Direction (clockwise or counter-clockwise)
+            None
 
         Returns:
             None
         """
-        self.direction_x = direction #Set direction
 
         self.step_x.value(1) #Move step
         utime.sleep(self.STEPPER_DELAY)
         self.step_x.value(0)
 
     
-    def stepOne_Y(self, direction: int):
+    def stepOne_Y(self):
         """
         This method moves the bot one step in the Y direction.
 
         Args:
-            Direction (clockwise or counter-clockwise)
+            None
 
         Returns:
             None
         """
-        self.direction_y = direction #Set direction
 
         self.step_y.value(1) #Move step
         utime.sleep(self.STEPPER_DELAY)
