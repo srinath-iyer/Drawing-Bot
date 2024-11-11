@@ -1,6 +1,5 @@
 <div align="center">
 
-  <img src="assets/logo.png" alt="logo" width="200" height="auto" />
   <h1>Pen-Plotting Robot</h1>
   
   <p>
@@ -33,11 +32,11 @@
 <h4>
     <a href="https://github.com/Louis3797/awesome-readme-template/">View Demo</a>
   <span> · </span>
-    <a href="https://github.com/Louis3797/awesome-readme-template">Documentation</a>
+    <a id = #documentation href="https://github.com/Louis3797/awesome-readme-template">Documentation</a>
   <span> · </span>
-    <a href="https://github.com/Louis3797/awesome-readme-template/issues/">Report Bug</a>
+    <a href="https://github.com/Louis3797/awesome-readme-template/issues/">CAD Model</a>
   <span> · </span>
-    <a href="https://github.com/Louis3797/awesome-readme-template/issues/">Request Feature</a>
+    <a href="https://github.com/Louis3797/awesome-readme-template/issues/">More</a>
   </h4>
 </div>
 
@@ -46,13 +45,11 @@
 <!-- Table of Contents -->
 # :notebook_with_decorative_cover: Table of Contents
 
-- [About the Project](#star2-about-the-project)
-  * [Screenshots](#camera-screenshots)
-  * [Tech Stack](#space_invader-tech-stack)
-  * [Features](#dart-features)
-  * [Color Reference](#art-color-reference)
-  * [Environment Variables](#key-environment-variables)
-- [Getting Started](#toolbox-getting-started)
+- [About the Project](#about-the-project)
+  * [Motivation](#motivation)
+  * [Screenshots](#screenshots)
+  * [Tech Stack](#tech-stack)
+- [Getting Started](#getting-started)
   * [Prerequisites](#bangbang-prerequisites)
   * [Installation](#gear-installation)
   * [Running Tests](#test_tube-running-tests)
@@ -70,8 +67,10 @@
   
 
 <!-- About the Project -->
-## :star2: About the Project
+## About the Project
 
+### Motivation
+This project was 
 
 <!-- Screenshots -->
 ### :camera: Screenshots
@@ -82,86 +81,26 @@
 
 
 <!-- TechStack -->
-### :space_invader: Tech Stack
+### Tech Stack
 
-<details>
-  <summary>Client</summary>
-  <ul>
-    <li><a href="https://www.typescriptlang.org/">Typescript</a></li>
-    <li><a href="https://nextjs.org/">Next.js</a></li>
-    <li><a href="https://reactjs.org/">React.js</a></li>
-    <li><a href="https://tailwindcss.com/">TailwindCSS</a></li>
-  </ul>
-</details>
-
-<details>
-  <summary>Server</summary>
-  <ul>
-    <li><a href="https://www.typescriptlang.org/">Typescript</a></li>
-    <li><a href="https://expressjs.com/">Express.js</a></li>
-    <li><a href="https://go.dev/">Golang</a></li>
-    <li><a href="https://nestjs.com/">Nest.js</a></li>
-    <li><a href="https://socket.io/">SocketIO</a></li>
-    <li><a href="https://www.prisma.io/">Prisma</a></li>    
-    <li><a href="https://www.apollographql.com/">Apollo</a></li>
-    <li><a href="https://graphql.org/">GraphQL</a></li>
-  </ul>
-</details>
-
-<details>
-<summary>Database</summary>
-  <ul>
-    <li><a href="https://www.mysql.com/">MySQL</a></li>
-    <li><a href="https://www.postgresql.org/">PostgreSQL</a></li>
-    <li><a href="https://redis.io/">Redis</a></li>
-    <li><a href="https://neo4j.com/">Neo4j</a></li>
-    <li><a href="https://www.mongodb.com/">MongoDB</a></li>
-  </ul>
-</details>
-
-<details>
-<summary>DevOps</summary>
-  <ul>
-    <li><a href="https://www.docker.com/">Docker</a></li>
-    <li><a href="https://www.jenkins.io/">Jenkins</a></li>
-    <li><a href="https://circleci.com/">CircleCLI</a></li>
-  </ul>
-</details>
-
-<!-- Features -->
-### :dart: Features
-
-- Feature 1
-- Feature 2
-- Feature 3
-
-<!-- Color Reference -->
-### :art: Color Reference
-
-| Color             | Hex                                                                |
-| ----------------- | ------------------------------------------------------------------ |
-| Primary Color | ![#222831](https://via.placeholder.com/10/222831?text=+) #222831 |
-| Secondary Color | ![#393E46](https://via.placeholder.com/10/393E46?text=+) #393E46 |
-| Accent Color | ![#00ADB5](https://via.placeholder.com/10/00ADB5?text=+) #00ADB5 |
-| Text Color | ![#EEEEEE](https://via.placeholder.com/10/EEEEEE?text=+) #EEEEEE |
-
-
-<!-- Env Variables -->
-### :key: Environment Variables
-
-To run this project, you will need to add the following environment variables to your .env file
-
-`API_KEY`
-
-`ANOTHER_API_KEY`
+- Micropython: An efficient implmentation of the Python 3 language optimized for running on microcontrollers.
+  - `bot.py`: A low level library that deals with robot control and direct microcontroller communication as well as simple controls functions so you can focus on developing higher-complexity algorithms.
+  - `main.py` and `boot.py`: ESP32 native files that are run upon startup.
+  - `script.py`: A canvas for the user to write and test their own commands and methods.
+- HTML/JS/CSS: Implementation of a socket web server for a User Interface and diagnostic dashboard.
 
 <!-- Getting Started -->
 ## 	:toolbox: Getting Started
 
 <!-- Prerequisites -->
-### :bangbang: Prerequisites
+### Prerequisites
 
-This project uses Yarn as package manager
+
+Before starting this project, you should have some sort of code editor installed (VSCode highly recommended) as Thonny IDE is not a good development environment and mostly serves as a conduit to run the ESP32 microcontroller on the robot. You should also have the assembled robot (see [Documentation](https://www.google.com) for more information)
+
+Additionally, it is highly recommended that you have git installed and set up, and that you fork this repository. You are welcome to play around with any files, but for the smoothest results, it is recommended that you do not modify `main.py`, `boot.py`, or `bot.py`, instead using the UI and `script.py` to do any robot operations you need.
+
+
 
 ```bash
  npm install --global yarn
@@ -170,7 +109,7 @@ This project uses Yarn as package manager
 <!-- Installation -->
 ### :gear: Installation
 
-Install my-project with npm
+To connect 
 
 ```bash
   yarn install my-project
@@ -278,19 +217,23 @@ Please read the [Code of Conduct](https://github.com/Louis3797/awesome-readme-te
 <!-- License -->
 ## :warning: License
 
-Distributed under the no License. See LICENSE.txt for more information.
+Distributed under the MIT License. See LICENSE.txt for more information.
 
 
 <!-- Contact -->
 ## :handshake: Contact
 
-Your Name - [@twitter_handle](https://twitter.com/twitter_handle) - email@email_client.com
-
-Project Link: [https://github.com/Louis3797/awesome-readme-template](https://github.com/Louis3797/awesome-readme-template)
+Srinath Iyer - srinath.iyer@duke.edu
+<br>
+Niko Weaver - 
+<br>
+Kelvin Zhang
+<br>
+Jack Voelker
 
 
 <!-- Acknowledgments -->
-## :gem: Acknowledgements
+## Acknowledgements
 
 Use this section to mention useful resources and libraries that you have used in your projects.
 
