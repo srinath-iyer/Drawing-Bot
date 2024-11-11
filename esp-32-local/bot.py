@@ -11,23 +11,23 @@ import utime
 
 from servo import Servo
 
-from math import math
+import math
 
 class Bot:
     
     # Constants:
-    DIRECTION_X_PIN = None
-    STEP_X_PIN = None
-    ENABLE_X_PIN = None
+    DIRECTION_X_PIN = 35 # This needs to be fixed, since pins >= 34 
+    STEP_X_PIN = 32
+    ENABLE_X_PIN = 34
 
-    DIRECTION_Y_PIN = None
-    STEP_Y_PIN = None
-    ENABLE_Y_PIN = None
+    DIRECTION_Y_PIN = 21 # Y Stepper driver is closest to ESP32
+    STEP_Y_PIN = 19
+    ENABLE_Y_PIN = 18
 
-    SERVO_PIN = None
+    SERVO_PIN = 27
 
-    LIMIT_SWITCH_X = None
-    LIMIT_SWITCH_Y = None
+    LIMIT_SWITCH_X = 12
+    LIMIT_SWITCH_Y = 13 # Closest to ESP-32
     LIMIT_CLOSED = 0
     LIMIT_OPEN = 1
 
@@ -35,9 +35,9 @@ class Bot:
 
 
 
-    PULLEY_CIRCUM = None
+    PULLEY_CIRCUM = 40 # 20 tooth pulley, 40 mm circumference
 
-    STEPS_PER_REV = None
+    STEPS_PER_REV = 200
 
     # Following constants are in mm
 
@@ -45,7 +45,7 @@ class Bot:
 
     ACCEPTABLE_ERROR = DISTANCE_PER_STEP
 
-    ACCEPTABLE_ERROR_SQRD = DISTANCE_PER_STEP**2
+    ACCEPTABLE_ERROR_SQRD = 2*DISTANCE_PER_STEP**2 # One step allowed in each direction leads to total distance = step^2 + step^2 = 2*step^2
 
     # Conversion from inches to mm
     MAX_X_LOC = 8*25.4
@@ -96,26 +96,14 @@ class Bot:
 
 
 
-        
-
-
-    # TODO: Find what input we would get from the limit_switch if it is triggered, and see how we can use that to say:
-    # if(there's an indicator that the limit switch has been hit): then set self.loc_x = 0
-    # There might be a limit switch library, though I have done zero research on this. My guess is that the input is simple a 1 or 0 (High, Low) where a High might mean it was triggered.
     def zero_X(self):
         """This method sets loc_x to 0."""
         self.loc_x=0
     
-    # TODO: Find what input we would get from the limit_switch if it is triggered, and see how we can use that to say:
-    # if(there's an indicator that the limit switch has been hit): then set self.loc_y = 0
-    # There might be a limit switch library, though I have done zero research on this. My guess is that the input is simple a 1 or 0 (High, Low) where a High might mean it was triggered.
     def zero_Y(self):
         """This method sets loc_y to 0."""
         self.loc_y=0
 
-
-    # TODO: Update the logic for self.is_zero based on the new parameters (only loc_x, loc_y, is there any way to make sure the pen is up before as well?)
-    # self.is_zero = (self.loc_x,self.loc_y,self.pen_state)=(0,0,False) is a potential solution, but this involves in making sure we understand how servos work in terms of up/down upon startup
     def is_robot_zero(self):
         """
         Evaluates whether both loc_x and loc_y have been zeroed.
@@ -128,7 +116,7 @@ class Bot:
             bool: is_zero
 
         """
-        self.is_zero = (self.loc_x,self.loc_y,self.pen_zero,self.pen_loc) == (0,0,True,0)
+        self.is_zero = (self.loc_x,self.loc_y) == (0,0)
         return self.is_zero
     
     def enable(self):
@@ -145,7 +133,6 @@ class Bot:
         self.enable_y.value(0)
         self.enabled = True
 
-    # TODO: We will need to discuss about error raising or other things with this method. This isn't all that important at the moment.
     def disable(self):
         """
         Used at the termination of a program, or called by the user in the case of an E-Stop
@@ -155,11 +142,14 @@ class Bot:
         self.pen_up()
         self.enabled = False
 
-    # TODO: Implement the set_direction method, which will take in the pin id (ex. `direction_x`) that suggests which motor we're reversing, and the value (a 1 or 0).
-    # As a modifier method, it would look something like, where pin_object is for example, `direction_x` and value_given is a function parameter: pin_object.value(value_given)
-    # Bonus ---> Write a good docstring using the Google Convention for this method
     def set_direction(self, direction_pin: Pin, value: int):
-        pass
+        """
+        Sets a pin to a given value, either 0 or 1
+        """
+        if(value not in [0,1]):
+            print("Incorrect arguments for set_direction(" + direction_pin)
+        else:
+            self.direction_pin.value(value)
       
     # TODO: Implement the logic for the method (if the Servo() object implementation works (see __init__ for more), then use the pertinent methods in here). 
     # This is entirely dependent on how you decide to control the servo and its protocols, so there's not much more I can say here.
@@ -199,103 +189,39 @@ class Bot:
             Returns:
                 None
         """
-        # Option 1: default, use slope while continuously updating
-        # Option 2: 
-
-
-
-        # slope = 0
-
-        # delta_x = (x - self.loc_x)
-        # delta_y = (y-self.loc_y)
-        # while (delta_x**2 + delta_y**2 > self.ACCEPTABLE_ERROR_SQRD): # while distance squared is greater than acceptable error squared
-        #     x_steps = delta_x / self.DISTANCE_PER_STEP # number of steps in x direction required
-        #     y_steps = delta_y / self.DISTANCE_PER_STEP
-
-        #     #**************WRITE EDGE CASE FOR IF DX = 0*********
-
-        #     for i in range(x_steps): 
-        #         slope = round(y-self.loc_y) / (x-self.loc_x)
-
-        #         if x-self.loc_x < 0: # if dx < 0, moving from right to left in x direction
-        #             self.stepOne_X(null)
-        #             self.update_loc_x(null)
-        #         elif x-self.loc_x > 0: # if dx >, moving from left to right in x direction
-        #             self.stepOne_X()
-        #             self.update_loc_y(null)
-
-        #         # move x
-        #         # find slope, and then round it
-        #         # each time x is incremented, increment y by slope
-                
-        #         for j in range(slope): # for every x increment, move y by this much (slope)
-
-        #             if y-self.loc_x < 0: # if dy < 0, moving from right to left in x direction
-        #                 self.stepOne_X(null)
-        #                 self.update_loc_x(null)
-        #             elif x-self.loc_x > 0: # if dx >, moving from left to right in x direction
-        #                 self.stepOne_X()
-        #                 self.update_loc_y(null)
-
-
-        # pass
         
+        dx = x - self.loc_x
+        dy = y - self.loc_y
+        total_distance = (dx**2 + dy**2)**0.5
 
-        slope = 0
-        delta_x = (x - self.loc_x)
-        delta_y = (y-self.loc_y)
-        while (delta_x**2 + delta_y**2 > self.ACCEPTABLE_ERROR_SQRD):
+        while dx**2 + dy**2 > self.ACCEPTABLE_ERROR_SQRD:
+            # Calculate step increments proportional to the slope
+            step_dx = self.DISTANCE_PER_STEP * (dx / total_distance)
+            step_dy = self.DISTANCE_PER_STEP * (dy / total_distance)
 
-            # Calculate Deltas
-            delta_x = (x - self.loc_x)
-            delta_y = (y-self.loc_y)
+            # Round steps to the nearest step_size for stepper motor precision
+            step_dx = round(step_dx / self.DISTANCE_PER_STEP) * self.DISTANCE_PER_STEP
+            step_dy = round(step_dy / self.DISTANCE_PER_STEP) * self.DISTANCE_PER_STEP
 
-            # Handle direction changes
-            if delta_x < 0:
-                self.set_direction(self.direction_x,(int)(not self.direction_x.value())) # If the delta x is negative, simply reverse the direction_x pin value
-                delta_x = abs(delta_x)
-            if delta_y < 0:
-                self.set_direction(self.direction_y,(int)(not self.direction_y.value())) # If the delta y is negative, simply reverse the direction_y pin value
-                delta_y=abs(delta_y)
-
-
-            # Edge Case
-            elif delta_x==0: # Edge case, since the slope will be undefined.
-                for i in range(round(delta_y)):
-                    self.stepOne_Y()
-                    self.update_loc_y()
-                    pass # Skip the remaining iteration of this loop.
-
-            
-            # Regular Algorithm
-            slope = delta_y/delta_x # Slope = Rise/Run
-
-
-            if slope >= 1:
-                for i in range(round(slope)):
-                    # move y
-                    self.stepOne_Y()
-                    self.update_loc_y()
-                
-                # move x
+            # Update the current position
+            for i in range(round(step_dx//self.DISTANCE_PER_STEP)):
+                if(step_dx < -1):
+                    self.set_direction(self.DIRECTION_X_PIN,(int)(not self.DIRECTION_X_PIN.value()))
                 self.stepOne_X()
                 self.update_loc_x()
-
-            elif slope < 1:
-                slope = 1/slope
-
-                for i in range(round(slope)):
-                    self.stepOne_X()
-                    self.update_loc_x()
-
-                # move y
+            for i in range(round(step_dy//self.DISTANCE_PER_STEP)):
+                if(step_dy < -1):
+                    self.set_direction(self.DIRECTION_Y_PIN,(int)(not self.DIRECTION_Y_PIN.value()))
                 self.stepOne_Y()
                 self.update_loc_y()
+            
+
+            # Update remaining distance
+            dx = x - self.loc_x
+            dy = y - self.loc_x
+            total_distance = (dx**2 + dy**2)**0.5
 
 
-
-    def go_to_bresenham(self, x: float, y: float):
-        pass
 
     def teleop(self, direction: int, steps: int):
         """
@@ -379,7 +305,7 @@ class Bot:
         self.step_y.value(0)
 
         
-    def update_loc_x(self, direction: int): #update loc_x based on whether motor is moving clockwise/counter-clockwise
+    def update_loc_x(self): #update loc_x based on whether motor is moving clockwise/counter-clockwise
         """
         This method updates the X location of the robot based on the direction.
 
@@ -396,7 +322,7 @@ class Bot:
             self.loc_x += self.DISTANCE_PER_STEP
             
     
-    def update_loc_y(self, direction: int): #update loc_y based on whether motor is moving clockwise/counter-clockwise
+    def update_loc_y(self): #update loc_y based on whether motor is moving clockwise/counter-clockwise
         """
         This method updates the Y location of the robot based on the direction.
 
@@ -412,9 +338,15 @@ class Bot:
         elif self.direction_y == 0:
             self.loc_x += self.DISTANCE_PER_STEP
 
-    #TODO: Implement get_status that returns a JSON about the robot state.
-    def get_status():
+
+    def get_status(self):
+        return {"loc_x": self.loc_x, "loc_y": self.loc_y, "pen_status": self.pen_state, "enable": self.enabled}
+    
+    
+    # TODO: Think about error raising and how that'll work for the user.
+    def raise_error(message, error_type):
         pass
+
 
 
 

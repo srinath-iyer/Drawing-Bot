@@ -17,8 +17,9 @@ async def handle_request(reader, writer):
         request = await reader.read(1024)
         request = request.decode('utf-8')
         if '/status' in request:
-            print("status")
-            std_messages = robot.get_status()
+            status = str(robot.get_status).replace("'",'"')
+            print(status)
+            std_messages = status
             std_messages[""]
         elif '/enable' in request:
             print("ENABLE")
@@ -41,7 +42,7 @@ async def handle_request(reader, writer):
                     response = "script.py does not have a main method."
 
         elif '/teleop-button' in request: # string parsing; do this later.
-            pass
+            request.find('/teleop-button')
 
         elif '/' in request:  # Default route to serve the main HTML page
             # Read the HTML content from the file

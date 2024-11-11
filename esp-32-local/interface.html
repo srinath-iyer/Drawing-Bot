@@ -205,9 +205,9 @@
                 .then(response => response.json())
                 .then(data => {
                     if (data) {
-                        document.getElementById('loc_x').textContent = "X Location: " + (data.loc_x || "N/A");
-                        document.getElementById('loc_y').textContent = "Y Location: " + (data.loc_y || "N/A");
-                        document.getElementById('pen_status').textContent = "Current Status: " + (data.pen_status || "N/A");
+                        document.getElementById('loc_x').textContent = "X Location: " + (String(data.loc_x) || "N/A");
+                        document.getElementById('loc_y').textContent = "Y Location: " + (String(data.loc_y) || "N/A");
+                        document.getElementById('pen_status').textContent = "Current Status: " + (String(data.pen_status) || "N/A");
                         document.getElementById('messages').textContent = data.messages || document.getElementById('messages').textContent;
                         if(data.enable == "disabled"){
                           document.getElementById('enable').disabled=false;

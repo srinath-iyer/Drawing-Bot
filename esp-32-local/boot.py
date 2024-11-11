@@ -8,6 +8,7 @@ except:
 from machine import Pin
 # enable wifi connections with ESP 32
 import network
+import json
 
 # Turn off debugging messages
 import esp
@@ -22,8 +23,9 @@ import bot
 robot=bot.Bot()
 
 import os
-f=open("esp-32-local/network.txt","r") # You will need to edit the contents of network.txt for your own network.
-network_info=dict(f.read())
+f=open("network.txt","r") # You will need to edit the contents of network.txt for your own network.
+network_info=json.loads(f.read())
+print(network_info)
 # Network information, change as necessary
 ssid = network_info["SSID"]
 password = network_info["Password"]
@@ -31,7 +33,10 @@ password = network_info["Password"]
 station = network.WLAN(network.STA_IF)
 
 station.active(True)
-station.connect(ssid, password)
+if password is not "None":
+    station.connect(ssid, password)
+else:
+    station.connect(ssid)
 
 while station.isconnected() == False:
   pass
@@ -40,3 +45,4 @@ print('Connection successful')
 print(station.ifconfig())
 
 led = Pin(2, Pin.OUT)
+
