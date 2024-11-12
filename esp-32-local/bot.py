@@ -165,10 +165,6 @@ class Bot:
             self.pen_servo.write(45)
         self.pen_state = False
 
-
-
-
-
     # TODO: Implement the logic for the method (if the Servo() object implementation works (see __init__ for more), then use the pertinent methods in here). 
     # This is entirely dependent on how you decide to control the servo and its protocols, so there's not much more I can say here.
     def pen_down(self):
@@ -244,16 +240,19 @@ class Bot:
             for i in range(steps):
                 self.stepOne_Y()
                 self.update_loc_y()
+
         if direction == self.DOWN:
             self.set_direction(self.direction_y, VALUE)
             for i in range(steps):
                 self.stepOne_Y()
                 self.update_loc_y()
+
         if direction == self.LEFT:
             self.set_direction(self.direction_x, VALUE)
             for i in range(steps):
                 self.stepOne_X()
                 self.update_loc_x()
+                
         if direction == self.RIGHT:
             self.set_direction(self.direction_x, VALUE)
             for i in range(steps):
