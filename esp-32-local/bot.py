@@ -50,6 +50,12 @@ class Bot:
     MAX_X_LOC = 8*25.4
     MAX_Y_LOC = 11.5*25.4
 
+    #Teleop button values for direction
+    UP = 0
+    DOWN = 1
+    LEFT = 2
+    RIGHT = 3
+
     # TODO: Test the Servo() implementation with a breadboard and the ESP-32. Use the https://pypi.org/project/micropython-servo/ docs to help
     def __init__(self):
         """
@@ -232,7 +238,27 @@ class Bot:
         Returns:
             None
         """
-        pass
+
+        if direction == self.UP:
+            self.set_direction(self.direction_y, VALUE)
+            for i in range(steps):
+                self.stepOne_Y()
+                self.update_loc_y()
+        if direction == self.DOWN:
+            self.set_direction(self.direction_y, VALUE)
+            for i in range(steps):
+                self.stepOne_Y()
+                self.update_loc_y()
+        if direction == self.LEFT:
+            self.set_direction(self.direction_x, VALUE)
+            for i in range(steps):
+                self.stepOne_X()
+                self.update_loc_x()
+        if direction == self.RIGHT:
+            self.set_direction(self.direction_x, VALUE)
+            for i in range(steps):
+                self.stepOne_X()
+                self.update_loc_x()
 
     # TODO: Implement this method. Not much more guidance here, you should develop the method and logic yourself. The hint is to use some sort of 
     # while looping.
