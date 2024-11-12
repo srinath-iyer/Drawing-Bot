@@ -16,7 +16,9 @@ import math
 class Bot:
     
     # Constants:
-    DIRECTION_X_PIN = 35 # This needs to be fixed, since pins >= 34 
+
+
+    DIRECTION_X_PIN = 35 # This needs to be fixed, since pins >= 34 are only Input
     STEP_X_PIN = 32
     ENABLE_X_PIN = 34
 
@@ -33,14 +35,11 @@ class Bot:
 
     STEPPER_DELAY = 0.001
 
-
-
     PULLEY_CIRCUM = 40 # 20 tooth pulley, 40 mm circumference
 
     STEPS_PER_REV = 200
 
     # Following constants are in mm
-
     DISTANCE_PER_STEP = PULLEY_CIRCUM/STEPS_PER_REV # 0.2 mm
 
     ACCEPTABLE_ERROR = DISTANCE_PER_STEP
@@ -65,7 +64,6 @@ class Bot:
                 None
 
         """
-
 
         # State Variables
         self.is_zero = False # Note: This variable is treated as a final variable after it evaluates to True because it will never be changed again in main.py after being zeroed.
@@ -346,6 +344,7 @@ class Bot:
     # TODO: Think about error raising and how that'll work for the user.
     def raise_error(message, error_type):
         pass
+
 
 
 
