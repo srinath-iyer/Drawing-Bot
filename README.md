@@ -52,7 +52,9 @@
 - [Getting Started](#getting-started)
   * [Prerequisites](#bangbang-prerequisites)
   * [Installation](#gear-installation)
-  * [Running Tests](#test_tube-running-tests)
+    * [Step 1: Set up Micropython](#step-1-set-up-micropython)
+    * [Step 2: Edit script.py and other files locally:](#step-2-edit-scriptpy-and-other-files-locally)
+  * [Editing Code](#editing-code)
   * [Run Locally](#running-run-locally)
   * [Deployment](#triangular_flag_on_post-deployment)
 - [Usage](#eyes-usage)
@@ -70,7 +72,7 @@
 ## About the Project
 
 ### Motivation
-This project was 
+This project was in response to a request by the EGR105L first year computing course at Duke University. 
 
 <!-- Screenshots -->
 ### :camera: Screenshots
@@ -96,28 +98,60 @@ This project was
 ### Prerequisites
 
 
-Before starting this project, you should have some sort of code editor installed (VSCode highly recommended) as Thonny IDE is not a good development environment and mostly serves as a conduit to run the ESP32 microcontroller on the robot. You should also have the assembled robot (see [Documentation](https://www.google.com) for more information)
+Before starting this project, you should have some sort of code editor installed (VSCode highly recommended) as Thonny IDE is not a good development environment and mostly serves as a conduit to run the ESP32 microcontroller on the robot. You should also have the assembled robot (see [Documentation](https://www.google.com) for more information) and an ESP32.
 
-Additionally, it is highly recommended that you have git installed and set up, and that you fork this repository. You are welcome to play around with any files, but for the smoothest results, it is recommended that you do not modify `main.py`, `boot.py`, or `bot.py`, instead using the UI and `script.py` to do any robot operations you need.
-
-
-
-```bash
- npm install --global yarn
-```
+Additionally, it is highly recommended that you have git installed and set up, and that you fork this repository, since you will need to make changes to `script.py`. You are welcome to play around with any files, but for the smoothest results, it is recommended that you do not modify `main.py`, `boot.py`, `bot.py`, or `interface.html`, instead using the UI and `script.py` to do any robot operations you need.
 
 <!-- Installation -->
-### :gear: Installation
+### Installation
 
-To connect 
+#### Step 1: Set up Micropython 
+
+If you have not installed micropython on your ESP32 or downloaded Thonny, start here. If you've already completed these two steps or are working with an already setup robot, skip to the next step.
+
+First, go to the [Thonny IDE](https://thonny.org/) website and download the correct version according to your operating system.
+
+Next, plug in the ESP32 microcontroller into your computer and open Thonny. Click `Run -> Configure Interpreter -> Which kind of interpreter? -> Select Micropython (ESP32)`.
+<div align="left"> 
+<br>
+  <img src="images/step1-mp.png" alt="screenshot" width="600px"/>
+</div>
+<br>
+
+Next, click `Install or Update MicroPython` and using the following options, install micropython. Note: you will need to know what port your device is connected to. You can do this by trial and error. Usually, the correct option will say something like "USB Serial", but depends on your device. After you've selected the right port, you should click `install`. This will take a minute or two.
+
+<br>
+<div align="left"> 
+  <img src="images/step1-mp-flash.png" alt="screenshot" width="600px"/>
+</div>
+<br>
+
+Now, you should have both Thonny set up and installed Micropython on your ESP32. You can test this by connecting your device in Thonny In the main menu, select `Run -> Configure Interpreter -> Which kind of interpreter? -> Select Micropython (ESP32)` and select `<Try to detect port automatically>`. Once you connect by pressing `OK`, you should be able to type basic commands in the REPL (Terminal) like below. If this works, then you have successfully completed configuration. If not, start Step 1 again, and if issues persist, consult Google or contact us.
+
+<br>
+
+<div align="left"> 
+  <img src="images/step1-mp-completed.png" alt="screenshot" width="800px"/>
+</div>
+
+<br>
+
+#### Step 2: Edit script.py and other files locally:
+
+First, fork this repo. You can do that at the top with the button that says `Fork`. 
+
+Next, open your terminal (or the terminal in VS Code or other IDEs of your chosing) and clone the repo with either HTTPS or SSH (SSH recommended).
 
 ```bash
-  yarn install my-project
-  cd my-project
+git clone git@github.com:srinath-iyer/Pen-Plotting-Bot.git
 ```
-   
+
+Additionally, if you don't want to use git, you can export the repo as a zip file and open it in any IDE.
+
+<br>
+
 <!-- Running Tests -->
-### :test_tube: Running Tests
+### :test_tube: Editing Code
 
 To run tests, run the following command
 
