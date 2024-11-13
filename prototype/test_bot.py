@@ -1,8 +1,5 @@
 """
-This file provides the Bot class, which provides all necessary methods for control and movement of the Pen Plotter robot. 
-It involves methods to take in user input, change and maintain state variables, and send/recieve signals to/from electronic devices through 
-Microcontroller Pin states. Users of this class will enjoy the fact that low abstraction controls have been implemented, therefore allowing users to
-focus on algorithmic development and application.
+This file provides the test_bot class, is a simplified version of the bot class, and is used to test the bot class without needing to use the UI, since it is still in development.
 
 """
 
@@ -11,16 +8,15 @@ import utime
 
 from servo import Servo
 
-import math
 
 class Bot:
     
     # Constants:
 
 
-    DIRECTION_X_PIN = 35 # This needs to be fixed, since pins >= 34 are only Input
-    STEP_X_PIN = 32
-    ENABLE_X_PIN = 34
+    DIRECTION_X_PIN = None # This needs to be fixed, since pins >= 34 are only Input
+    STEP_X_PIN = None
+    ENABLE_X_PIN = None
 
     DIRECTION_Y_PIN = 21 # Y Stepper driver is closest to ESP32
     STEP_Y_PIN = 19
@@ -49,7 +45,6 @@ class Bot:
     # Conversion from inches to mm
     MAX_X_LOC = 8*25.4
     MAX_Y_LOC = 11.5*25.4
-
 
     # TODO: Test the Servo() implementation with a breadboard and the ESP-32. Use the https://pypi.org/project/micropython-servo/ docs to help
     def __init__(self):
@@ -97,6 +92,8 @@ class Bot:
         self.enable()
         self.set_direction(self.direction_x, 1)
         self.set_direction(self.direction_y, 1)
+
+
 
     def zero_X(self):
         """This method sets loc_x to 0."""
