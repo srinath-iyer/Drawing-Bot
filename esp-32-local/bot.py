@@ -18,9 +18,9 @@ class Bot:
     # Constants:
 
 
-    DIRECTION_X_PIN = 35 # This needs to be fixed, since pins >= 34 are only Input
-    STEP_X_PIN = 32
-    ENABLE_X_PIN = 34
+    DIRECTION_X_PIN = 33 # This needs to be fixed, since pins >= 34 are only Input
+    STEP_X_PIN = 25
+    ENABLE_X_PIN = 32
 
     DIRECTION_Y_PIN = 21 # Y Stepper driver is closest to ESP32
     STEP_Y_PIN = 19
@@ -51,10 +51,10 @@ class Bot:
     MAX_Y_LOC = 11.5*25.4
 
     #Teleop button values for direction
-    UP = 0
-    DOWN = 1
-    LEFT = 2
-    RIGHT = 3
+    HTML_BUTTON_UP = 0
+    HTML_BUTTON_DOWN = 1
+    HTML_BUTTON_LEFT = 2
+    HTML_BUTTON_RIGHT = 3
 
     # TODO: Test the Servo() implementation with a breadboard and the ESP-32. Use the https://pypi.org/project/micropython-servo/ docs to help
     def __init__(self):
@@ -73,8 +73,8 @@ class Bot:
 
         # State Variables
         self.is_zero = False # Note: This variable is treated as a final variable after it evaluates to True because it will never be changed again in main.py after being zeroed.
-        self.loc_x = None
-        self.loc_y = None
+        self.loc_x = 4829.0 # Random values
+        self.loc_y = 4829.0 # Random values
         self.pen_state = True # True -> Pen Down, False -> Pen Up
         self.enabled = False
 
@@ -94,22 +94,22 @@ class Bot:
         self.pen_servo.write(45)
         self.pen_state = False
         
-        #Limit switches
+        # Limit switches
         self.limit_switch_x = Pin(self.LIMIT_SWITCH_X, Pin.IN)
         self.limit_switch_y = Pin(self.LIMIT_SWITCH_Y, Pin.IN)
 
         # Get robot ready for motion:
         self.enable()
-        self.set_direction(self.direction_x, 1)
-        self.set_direction(self.direction_y, 1)
+        self.set_direction(self.direction_x, 0) # - X
+        self.set_direction(self.direction_y, 1) # - Y
 
     def zero_X(self):
         """This method sets loc_x to 0."""
-        self.loc_x=0
+        self.loc_x=0.0
     
     def zero_Y(self):
         """This method sets loc_y to 0."""
-        self.loc_y=0
+        self.loc_y=0.0
 
     def is_robot_zero(self):
         """
@@ -123,7 +123,8 @@ class Bot:
             bool: is_zero
 
         """
-        self.is_zero = (self.loc_x,self.loc_y) == (0,0)
+        if not self.is_zero:
+            self.is_zero = (self.loc_x,self.loc_y) == (0.0,0.0)
         return self.is_zero
     
     def enable(self):
@@ -154,12 +155,10 @@ class Bot:
         Sets a pin to a given value, either 0 or 1
         """
         if(value not in [0,1]):
-            print("Incorrect arguments for set_direction(" + direction_pin)
+            raise ValueError("Incorrect arguments for set_direction(" + direction_pin)
         else:
             self.direction_pin.value(value)
       
-    # TODO: Implement the logic for the method (if the Servo() object implementation works (see __init__ for more), then use the pertinent methods in here). 
-    # This is entirely dependent on how you decide to control the servo and its protocols, so there's not much more I can say here.
     def pen_up(self):
         """
         This method moves or keeps the pen up.
@@ -168,8 +167,7 @@ class Bot:
             self.pen_servo.write(45)
         self.pen_state = False
 
-    # TODO: Implement the logic for the method (if the Servo() object implementation works (see __init__ for more), then use the pertinent methods in here). 
-    # This is entirely dependent on how you decide to control the servo and its protocols, so there's not much more I can say here.
+
     def pen_down(self):
         """
         This method moves or keeps the pen down.
@@ -178,9 +176,8 @@ class Bot:
             self.pen_servo.off()
         self.pen_state = True
     
-    # BIG TODO: As a start, familiarize yourself with the Bresenham's Line Algorithm (Google this), and think about what variables/states matter
-    # Let's do this method together, because it involves a lot of method calling, logic, and math and also should be written really cleanly.
     def go_to(self, x: float, y: float):
+
         """
         This method takes in data from the HTML User interface, and moves the robot. It is primarily used for
         testing purposes and also for zeroing the robot at the beginning of the 
@@ -207,15 +204,17 @@ class Bot:
             step_dy = round(step_dy / self.DISTANCE_PER_STEP) * self.DISTANCE_PER_STEP
 
             # Update the current position
+
+            # TODO: I think an error in logic could be here. Think about this further and run tests.
             for i in range(round(step_dx//self.DISTANCE_PER_STEP)):
                 if(step_dx < -1):
                     self.set_direction(self.DIRECTION_X_PIN,(int)(not self.DIRECTION_X_PIN.value()))
-                self.stepOne_X()
+                self.step_one_X()
                 self.update_loc_x()
             for i in range(round(step_dy//self.DISTANCE_PER_STEP)):
                 if(step_dy < -1):
                     self.set_direction(self.DIRECTION_Y_PIN,(int)(not self.DIRECTION_Y_PIN.value()))
-                self.stepOne_Y()
+                self.step_one_y()
                 self.update_loc_y()
             
 
@@ -226,40 +225,40 @@ class Bot:
 
 
 
-    def teleop(self, direction: int, steps: int):
+    def teleop(self, button_id: int, steps: int):
         """
         This method allows users to manually control and move the robot a user-specified number of steps in a certain direction.
         
         Args:
-            direction (int): The desired direction (x or y)
+            button_id (int): The button_id clicked in the UI
             steps (int): The desired number of steps
 
         Returns:
             None
         """
 
-        if direction == self.UP:
-            self.set_direction(self.direction_y, VALUE)
+        if button_id == self.HTML_BUTTON_UP: # + Y
+            self.set_direction(self.direction_y, 0)
             for i in range(steps):
-                self.stepOne_Y()
+                self.step_one_y()
                 self.update_loc_y()
 
-        if direction == self.DOWN:
-            self.set_direction(self.direction_y, VALUE)
+        if button_id == self.HTML_BUTTON_DOWN: # - Y
+            self.set_direction(self.direction_y, 1)
             for i in range(steps):
-                self.stepOne_Y()
+                self.step_one_y()
                 self.update_loc_y()
 
-        if direction == self.LEFT:
-            self.set_direction(self.direction_x, VALUE)
+        if button_id == self.HTML_BUTTON_LEFT: # - X
+            self.set_direction(self.direction_x, 0)
             for i in range(steps):
-                self.stepOne_X()
+                self.step_one_X()
                 self.update_loc_x()
                 
-        if direction == self.RIGHT:
-            self.set_direction(self.direction_x, VALUE)
+        if button_id == self.HTML_BUTTON_RIGHT: # + X
+            self.set_direction(self.direction_x, 1)
             for i in range(steps):
-                self.stepOne_X()
+                self.step_one_X()
                 self.update_loc_x()
 
     # TODO: Implement this method. Not much more guidance here, you should develop the method and logic yourself. The hint is to use some sort of 
@@ -278,28 +277,22 @@ class Bot:
 
 
         """
+        self.set_direction(self.direction_x,0)
+        self.set_direction(self.direction_y,1)
 
-        # while limit switch X = low:
-            # move towards direction of limit switch X
-
-        # while limit switch Y = low:
-            # move towards direction of limit switch Y
-
-
-        #According to ChatGPT, limit switches send 0 when pressed (closed), and 1 when not pressed (open)
-        #LIMIT_OPEN = 0
-        while self.limit_switch_x == self.LIMIT_OPEN:
-            self.stepOne_X(1) #move stepper X in direction of limit switch
-        while self.limit_switch_y == self.LIMIT_OPEN:
-            self.stepOne_Y(1) #move stepper Y in direction of limit switch
+        while self.limit_switch_x.value() == self.LIMIT_OPEN:
+            self.step_one_X() #move stepper X in direction of limit switch
+        while self.limit_switch_y.value() == self.LIMIT_OPEN:
+            self.step_one_y() #move stepper Y in direction of limit switch
 
         self.zero_X()
         self.zero_Y()
+        self.is_robot_zero()
 
     
     
     
-    def stepOne_X(self):
+    def step_one_X(self):
         """
         This method moves the bot one step in the X direction.
 
@@ -310,12 +303,12 @@ class Bot:
             None
         """
 
-        self.step_x.value(1) #Move step
+        self.step_x.value(1)
         utime.sleep(self.STEPPER_DELAY)
         self.step_x.value(0)
-
+        utime.sleep(self.STEPPER_DELAY)
     
-    def stepOne_Y(self):
+    def step_one_y(self):
         """
         This method moves the bot one step in the Y direction.
 
@@ -329,6 +322,7 @@ class Bot:
         self.step_y.value(1) #Move step
         utime.sleep(self.STEPPER_DELAY)
         self.step_y.value(0)
+        utime.sleep(self.STEPPER_DELAY)
 
         
     def update_loc_x(self): #update loc_x based on whether motor is moving clockwise/counter-clockwise
@@ -343,9 +337,9 @@ class Bot:
         """
         #This stuff should be corrected later once we know whether direction_x == 1 means clockwise or counter
         if self.direction_x == 1:
-            self.loc_x -= self.DISTANCE_PER_STEP 
+            self.loc_x += self.DISTANCE_PER_STEP 
         elif self.direction_x == 0:
-            self.loc_x += self.DISTANCE_PER_STEP
+            self.loc_x -= self.DISTANCE_PER_STEP
             
     
     def update_loc_y(self): #update loc_y based on whether motor is moving clockwise/counter-clockwise

@@ -14,9 +14,9 @@ class Bot:
     # Constants:
 
 
-    DIRECTION_X_PIN = None # This needs to be fixed, since pins >= 34 are only Input
-    STEP_X_PIN = None
-    ENABLE_X_PIN = None
+    DIRECTION_X_PIN = 33 # This needs to be fixed, since pins >= 34 are only Input
+    STEP_X_PIN = 25
+    ENABLE_X_PIN = 32
 
     DIRECTION_Y_PIN = 21 # Y Stepper driver is closest to ESP32
     STEP_Y_PIN = 19
