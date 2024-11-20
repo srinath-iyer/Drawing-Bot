@@ -42,9 +42,7 @@ class Bot:
     # Following constants are in mm
     DISTANCE_PER_STEP = PULLEY_CIRCUM/STEPS_PER_REV # 0.2 mm
 
-    ACCEPTABLE_ERROR = DISTANCE_PER_STEP
-
-    ACCEPTABLE_ERROR_SQRD = 2*DISTANCE_PER_STEP**2 # One step allowed in each direction leads to total distance = step^2 + step^2 = 2*step^2
+    ACCEPTABLE_ERROR_SQRD = 1 # This means that the acceptable error is 1mm, which doesn't make much of a difference visually.
 
     # Conversion from inches to mm
     MAX_X_LOC = 8*25.4
@@ -56,7 +54,7 @@ class Bot:
     HTML_BUTTON_LEFT = 2
     HTML_BUTTON_RIGHT = 3
 
-    # TODO: Test the Servo() implementation with a breadboard and the ESP-32. Use the https://pypi.org/project/micropython-servo/ docs to help
+
     def __init__(self):
         """
         The Bot class is instantiated in boot.py, and therefore init is called. It is assumed that the robot
@@ -103,17 +101,19 @@ class Bot:
         self.set_direction(self.direction_x, 0) # - X
         self.set_direction(self.direction_y, 1) # - Y
 
+
+
     def zero_X(self):
-        """This method sets loc_x to 0."""
+        """This method sets loc_x to 0. This method should not be called by the user in their scripts."""
         self.loc_x=0.0
     
     def zero_Y(self):
-        """This method sets loc_y to 0."""
+        """This method sets loc_y to 0. This method should not be called by the user in their scripts."""
         self.loc_y=0.0
 
     def is_robot_zero(self):
         """
-        Evaluates whether both loc_x and loc_y have been zeroed.
+        Evaluates whether both loc_x and loc_y have been zeroed. This method should not be called by the user in their scripts.
 
         This method is only called at startup (ie. when the robot is zeroed at first), and once is_zero is set to True, is treated as a final variable.
         This method checks if loc_x, loc_y, and pen_zero are zeroed, and sets is_zero to this value. This is valuable so that no automated instructions are carried out
@@ -157,7 +157,7 @@ class Bot:
         if(value not in [0,1]):
             raise ValueError("Incorrect arguments for set_direction(" + direction_pin)
         else:
-            self.direction_pin.value(value)
+            direction_pin.value(value)
       
     def pen_up(self):
         """
@@ -189,31 +189,48 @@ class Bot:
             Returns:
                 None
         """
-        
+
         dx = x - self.loc_x
         dy = y - self.loc_y
         total_distance = (dx**2 + dy**2)**0.5
 
+        error_x = 0
+        error_y = 0
+
+
         while dx**2 + dy**2 > self.ACCEPTABLE_ERROR_SQRD:
+
+            # Handle all direction switches
+
+            if(x > self.loc_x):
+                self.set_direction(self.direction_x, 1)
+            elif(x < self.loc_x):
+                self.set_direction(self.direction_x, 0)
+            if(y > self.loc_y):
+                self.set_direction(self.direction_y, 0)
+            elif(y < self.loc_y):
+                self.set_direction(self.direction_y, 1)
+
             # Calculate step increments proportional to the slope
-            step_dx = self.DISTANCE_PER_STEP * (dx / total_distance)
-            step_dy = self.DISTANCE_PER_STEP * (dy / total_distance)
+            raw_step_dx = self.DISTANCE_PER_STEP * (dx / total_distance)
+            raw_step_dy = self.DISTANCE_PER_STEP * (dy / total_distance)
+
+            raw_step_dx += error_x
+            raw_step_dy += error_y
+
 
             # Round steps to the nearest step_size for stepper motor precision
-            step_dx = round(step_dx / self.DISTANCE_PER_STEP) * self.DISTANCE_PER_STEP
-            step_dy = round(step_dy / self.DISTANCE_PER_STEP) * self.DISTANCE_PER_STEP
+            step_dx = round(raw_step_dx / self.DISTANCE_PER_STEP) * self.DISTANCE_PER_STEP
+            step_dy = round(raw_step_dy / self.DISTANCE_PER_STEP) * self.DISTANCE_PER_STEP
+
+            error_x = raw_step_dx - step_dx
+            error_y = raw_step_dy - step_dy
 
             # Update the current position
-
-            # TODO: I think an error in logic could be here. Think about this further and run tests.
-            for i in range(round(step_dx//self.DISTANCE_PER_STEP)):
-                if(step_dx < -1):
-                    self.set_direction(self.DIRECTION_X_PIN,(int)(not self.DIRECTION_X_PIN.value()))
+            for _ in range(round(step_dx//self.DISTANCE_PER_STEP)):
                 self.step_one_X()
                 self.update_loc_x()
-            for i in range(round(step_dy//self.DISTANCE_PER_STEP)):
-                if(step_dy < -1):
-                    self.set_direction(self.DIRECTION_Y_PIN,(int)(not self.DIRECTION_Y_PIN.value()))
+            for _ in range(round(step_dy//self.DISTANCE_PER_STEP)):
                 self.step_one_y()
                 self.update_loc_y()
             
@@ -222,6 +239,8 @@ class Bot:
             dx = x - self.loc_x
             dy = y - self.loc_x
             total_distance = (dx**2 + dy**2)**0.5
+
+            return
 
 
 
@@ -239,30 +258,29 @@ class Bot:
 
         if button_id == self.HTML_BUTTON_UP: # + Y
             self.set_direction(self.direction_y, 0)
-            for i in range(steps):
+            for _ in range(steps):
                 self.step_one_y()
                 self.update_loc_y()
 
         if button_id == self.HTML_BUTTON_DOWN: # - Y
             self.set_direction(self.direction_y, 1)
-            for i in range(steps):
+            for _ in range(steps):
                 self.step_one_y()
                 self.update_loc_y()
 
         if button_id == self.HTML_BUTTON_LEFT: # - X
             self.set_direction(self.direction_x, 0)
-            for i in range(steps):
+            for _ in range(steps):
                 self.step_one_X()
                 self.update_loc_x()
                 
         if button_id == self.HTML_BUTTON_RIGHT: # + X
             self.set_direction(self.direction_x, 1)
-            for i in range(steps):
+            for _ in range(steps):
                 self.step_one_X()
                 self.update_loc_x()
 
-    # TODO: Implement this method. Not much more guidance here, you should develop the method and logic yourself. The hint is to use some sort of 
-    # while looping.
+
     def auto_zero(self):
         """
         This method automatically zeros the robot X and Y axis. 
@@ -281,9 +299,9 @@ class Bot:
         self.set_direction(self.direction_y,1)
 
         while self.limit_switch_x.value() == self.LIMIT_OPEN:
-            self.step_one_X() #move stepper X in direction of limit switch
+            self.step_one_X()
         while self.limit_switch_y.value() == self.LIMIT_OPEN:
-            self.step_one_y() #move stepper Y in direction of limit switch
+            self.step_one_y()
 
         self.zero_X()
         self.zero_Y()
@@ -319,13 +337,13 @@ class Bot:
             None
         """
 
-        self.step_y.value(1) #Move step
+        self.step_y.value(1)
         utime.sleep(self.STEPPER_DELAY)
         self.step_y.value(0)
         utime.sleep(self.STEPPER_DELAY)
 
         
-    def update_loc_x(self): #update loc_x based on whether motor is moving clockwise/counter-clockwise
+    def update_loc_x(self):
         """
         This method updates the X location of the robot based on the direction.
 
@@ -335,14 +353,14 @@ class Bot:
         Returns:
             None
         """
-        #This stuff should be corrected later once we know whether direction_x == 1 means clockwise or counter
+        
         if self.direction_x == 1:
             self.loc_x += self.DISTANCE_PER_STEP 
         elif self.direction_x == 0:
             self.loc_x -= self.DISTANCE_PER_STEP
             
     
-    def update_loc_y(self): #update loc_y based on whether motor is moving clockwise/counter-clockwise
+    def update_loc_y(self):
         """
         This method updates the Y location of the robot based on the direction.
 
@@ -352,7 +370,7 @@ class Bot:
         Returns:
             None
         """
-        #This stuff should be corrected later once we know whether direction_y == 1 means clockwise or counter
+
         if self.direction_y == 1:
             self.loc_x -= self.DISTANCE_PER_STEP
         elif self.direction_y == 0:

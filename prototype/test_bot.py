@@ -1,3 +1,5 @@
+# This file is now deprecated, and no longer being used for testing purposes. Please refer to bot.py in /esp-32-local.
+
 """
 This file provides the test_bot class, is a simplified version of the bot class, and is used to test the bot class without needing to use the UI, since it is still in development.
 
