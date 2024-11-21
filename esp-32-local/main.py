@@ -5,23 +5,21 @@ import script
 
 robot = Bot()
 
-def web_page(): 
-  html = open("interface.html","r").read()
-  return html
+web_page = open("interface.html","r").read()
 
 # async method to handle http requests from the webserver
 async def handle_request(reader, writer):
-    new_messages = "" # If something notable happens, we add the
     try:
         # Read the request (up to 1024 bytes)
         request = await reader.read(1024)
         request = request.decode('utf-8')
+
         if '/status' in request:
             status = str(robot.get_status).replace("'",'"')
             print(status)
             response = status
+
         elif '/enable' in request:
-            print("ENABLE")
             robot.enable()
             response = "Robot is enabled" if robot.enabled else "Error in enabling"
             
@@ -31,10 +29,20 @@ async def handle_request(reader, writer):
 
         elif '/auto-home' in request:
             robot.auto_zero()
-            reponse = "Robot is zeroed" if robot.is_robot_zero else "That didn't work. Try again."
+            response = "Robot is zeroed" if robot.is_robot_zero else "That didn't work. Try again."
 
-        elif '/start-script' in request: # This one is complicated; we have to call the main() in script.py
-            if(robot.is_robot_zero() and robot.enabled and robot.is_zero):
+        elif '/pen-up' in request:
+            robot.pen_up()
+            response = "Pen Up"
+        
+        elif '/pen-down' in request:
+            robot.pen_down()
+            response = "Pen Down"
+
+        elif '/start-script' in request:
+            if(robot.is_robot_zero() and robot.enabled):
+                if(robot.loc_x is not 0.0 or robot.loc_y is not 0.0):
+                    robot.auto_zero()
                 if hasattr(script, 'main'):
                     script.main()
                 else:
@@ -50,7 +58,7 @@ async def handle_request(reader, writer):
             response = str(button_val) + " " + str(step_val)
         elif '/' in request:  # Default route to serve the main HTML page
             # Read the HTML content from the file
-            response = web_page()
+            response = web_page
         
         # Prepare the HTTP response
         header = 'HTTP/1.1 200 OK\r\nContent-Type: text/html\r\n\r\n'
@@ -84,6 +92,3 @@ try:
     asyncio.run(start_server())
 except KeyboardInterrupt:
     print("Server stopped")
-    
-
-    

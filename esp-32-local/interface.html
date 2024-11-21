@@ -145,8 +145,8 @@
         </div>
         <h2>Pen Up/Down</h2>
         <p id="pen_status">Current Status: </p>
-        <button type="button" onclick="pen_up(true)">Pen Up</button><br></br>
-        <button type="button" onclick="pen_up(false)">Pen Down</button>
+        <button type="button" onclick="pen_up()">Pen Up</button><br></br>
+        <button type="button" onclick="pen_down()">Pen Down</button>
 
         <h2>Teleop Mode: Manually control the robot</h2>
         <h3>Select Number of Steps and Click the Direction Buttons:</h3>
@@ -197,7 +197,7 @@
     }
 
     function teleop_button(value, steps){
-      fetch(`/teleop-button?id=${value}&steps=${steps}`).then(response => response.text()).then(data => console.log(data));
+      fetch(`/teleop-button?id=${value}&steps=${steps}`)
     }
 
     function updateStatus() { // Gets the status of the robot by sending a request to /status. Gets Loc and Pen State, as well as any messages
@@ -222,6 +222,14 @@
 
     
     // Commands: No parameters taken in
+
+    function pen_up(){
+      fetch('/pen-up')
+    }
+
+    function pen_down(){
+      fetch('/pen-down')
+    }
 
     function e_stop(){
       fetch('/e-stop')
