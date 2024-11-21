@@ -265,12 +265,18 @@ class Bot:
         if button_id == self.HTML_BUTTON_DOWN: # - Y
             self.set_direction(self.direction_y, 1)
             for _ in range(steps):
+                if(not self.check_y_lim_switch):
+                    self.zero_Y()
+                    break
                 self.step_one_y()
                 self.update_loc_y()
 
         if button_id == self.HTML_BUTTON_LEFT: # - X
             self.set_direction(self.direction_x, 0)
             for _ in range(steps):
+                if(not self.check_x_lim_switch):
+                    self.zero_X()
+                    break
                 self.step_one_X()
                 self.update_loc_x()
                 
@@ -279,6 +285,8 @@ class Bot:
             for _ in range(steps):
                 self.step_one_X()
                 self.update_loc_x()
+
+        self.is_robot_zero()
 
 
     def auto_zero(self):
@@ -298,9 +306,9 @@ class Bot:
         self.set_direction(self.direction_x,0)
         self.set_direction(self.direction_y,1)
 
-        while self.limit_switch_x.value() == self.LIMIT_OPEN:
+        while self.check_x_lim_switch():
             self.step_one_X()
-        while self.limit_switch_y.value() == self.LIMIT_OPEN:
+        while self.check_y_lim_switch():
             self.step_one_y()
 
         self.zero_X()
@@ -384,6 +392,24 @@ class Bot:
     # TODO: Think about error raising and how that'll work for the user.
     def raise_error(message, error_type):
         pass
+
+    def check_x_lim_switch(self):
+        """
+        Returns the status of the x limit switch.
+
+        True = Open
+        False = Closed
+        """
+        return self.limit_switch_x.value() == 1
+    
+    def check_y_lim_switch(self):
+        """
+        Returns the status of the y limit switch.
+
+        True = Open
+        False = Closed
+        """
+        return self.limit_switch_y.value() == 1
 
 
 
