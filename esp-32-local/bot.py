@@ -42,7 +42,7 @@ class Bot:
     # Following constants are in mm
     DISTANCE_PER_STEP = PULLEY_CIRCUM/STEPS_PER_REV # 0.2 mm
 
-    ACCEPTABLE_ERROR_SQRD = 1 # This means that the acceptable error is 1mm, which doesn't make much of a difference visually.
+    ACCEPTABLE_ERROR_SQRD = 2 # This means that the acceptable error is 1mm, which doesn't make much of a difference visually.
 
     # Conversion from inches to mm
     MAX_X_LOC = 8*25.4
@@ -198,17 +198,16 @@ class Bot:
         error_y = 0
 
 
-        while dx**2 + dy**2 > self.ACCEPTABLE_ERROR_SQRD:
-
+        while total_distance > self.ACCEPTABLE_ERROR_SQRD:
             # Handle all direction switches
 
             if(x > self.loc_x):
                 self.set_direction(self.direction_x, 1)
-            elif(x < self.loc_x):
+            if(x < self.loc_x):
                 self.set_direction(self.direction_x, 0)
             if(y > self.loc_y):
                 self.set_direction(self.direction_y, 0)
-            elif(y < self.loc_y):
+            if(y < self.loc_y):
                 self.set_direction(self.direction_y, 1)
 
             # Calculate step increments proportional to the slope
@@ -230,17 +229,17 @@ class Bot:
             for _ in range(round(step_dx//self.DISTANCE_PER_STEP)):
                 self.step_one_X()
                 self.update_loc_x()
+                print("X :" + str(self.loc_x) + ", " + "Y: " + str(self.loc_y))
             for _ in range(round(step_dy//self.DISTANCE_PER_STEP)):
                 self.step_one_y()
                 self.update_loc_y()
+                print("X :" + str(self.loc_x) + ", " + "Y: " + str(self.loc_y))
             
 
             # Update remaining distance
             dx = x - self.loc_x
-            dy = y - self.loc_x
+            dy = y - self.loc_y
             total_distance = (dx**2 + dy**2)**0.5
-
-            return
 
 
 
@@ -328,11 +327,11 @@ class Bot:
         Returns:
             None
         """
-
-        self.step_x.value(1)
-        utime.sleep(self.STEPPER_DELAY)
-        self.step_x.value(0)
-        utime.sleep(self.STEPPER_DELAY)
+        for i in range(8):
+            self.step_x.value(1)
+            utime.sleep(self.STEPPER_DELAY)
+            self.step_x.value(0)
+            utime.sleep(self.STEPPER_DELAY)
     
     def step_one_y(self):
         """
@@ -344,11 +343,11 @@ class Bot:
         Returns:
             None
         """
-
-        self.step_y.value(1)
-        utime.sleep(self.STEPPER_DELAY)
-        self.step_y.value(0)
-        utime.sleep(self.STEPPER_DELAY)
+        for i in range(8):
+            self.step_y.value(1)
+            utime.sleep(self.STEPPER_DELAY)
+            self.step_y.value(0)
+            utime.sleep(self.STEPPER_DELAY)
 
         
     def update_loc_x(self):
@@ -362,10 +361,11 @@ class Bot:
             None
         """
         
-        if self.direction_x == 1:
+        if self.direction_x.value() == 1:
             self.loc_x += self.DISTANCE_PER_STEP 
-        elif self.direction_x == 0:
+        elif self.direction_x.value() == 0:
             self.loc_x -= self.DISTANCE_PER_STEP
+            
             
     
     def update_loc_y(self):
@@ -379,10 +379,11 @@ class Bot:
             None
         """
 
-        if self.direction_y == 1:
-            self.loc_x -= self.DISTANCE_PER_STEP
-        elif self.direction_y == 0:
-            self.loc_x += self.DISTANCE_PER_STEP
+        if self.direction_y.value() == 1:
+            self.loc_y -= self.DISTANCE_PER_STEP
+        elif self.direction_y.value() == 0:
+            self.loc_y += self.DISTANCE_PER_STEP
+            
 
 
     def get_status(self):
@@ -410,6 +411,7 @@ class Bot:
         False = Closed
         """
         return self.limit_switch_y.value() == 1
+
 
 
 
