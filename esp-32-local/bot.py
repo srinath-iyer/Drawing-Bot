@@ -42,7 +42,7 @@ class Bot:
     # Following constants are in mm
     DISTANCE_PER_STEP = PULLEY_CIRCUM/STEPS_PER_REV # 0.2 mm
 
-    ACCEPTABLE_ERROR_SQRD = 2 # This means that the acceptable error is 1mm, which doesn't make much of a difference visually.
+    ACCEPTABLE_ERROR = 1 # This means that the acceptable error is 1mm, which doesn't make much of a difference visually.
 
     # Conversion from inches to mm
     MAX_X_LOC = 8*25.4
@@ -198,7 +198,7 @@ class Bot:
         error_y = 0
 
 
-        while total_distance > self.ACCEPTABLE_ERROR_SQRD:
+        while total_distance > self.ACCEPTABLE_ERROR:
             # Handle all direction switches
 
             if(x > self.loc_x):
@@ -211,8 +211,8 @@ class Bot:
                 self.set_direction(self.direction_y, 1)
 
             # Calculate step increments proportional to the slope
-            raw_step_dx = self.DISTANCE_PER_STEP * (dx / total_distance)
-            raw_step_dy = self.DISTANCE_PER_STEP * (dy / total_distance)
+            raw_step_dx = abs(self.DISTANCE_PER_STEP * (dx / total_distance))
+            raw_step_dy = abs(self.DISTANCE_PER_STEP * (dy / total_distance))
 
             raw_step_dx += error_x
             raw_step_dy += error_y
@@ -226,14 +226,16 @@ class Bot:
             error_y = raw_step_dy - step_dy
 
             # Update the current position
-            for _ in range(round(step_dx//self.DISTANCE_PER_STEP)):
+            for _ in range(round(step_dx/self.DISTANCE_PER_STEP)):
                 self.step_one_X()
                 self.update_loc_x()
-                print("X :" + str(self.loc_x) + ", " + "Y: " + str(self.loc_y))
-            for _ in range(round(step_dy//self.DISTANCE_PER_STEP)):
+                # for testing
+                #print("X :" + str(self.loc_x) + ", " + "Y: " + str(self.loc_y))
+            for _ in range(round(step_dy/self.DISTANCE_PER_STEP)):
                 self.step_one_y()
                 self.update_loc_y()
-                print("X :" + str(self.loc_x) + ", " + "Y: " + str(self.loc_y))
+                # for testing
+                #print("X :" + str(self.loc_x) + ", " + "Y: " + str(self.loc_y))
             
 
             # Update remaining distance
