@@ -201,15 +201,15 @@
     }
 
     function updateStatus() { // Gets the status of the robot by sending a request to /status. Gets Loc and Pen State, as well as any messages
-            fetch('/status', {method: 'GET'})
+            fetch('/status', { timeout: 5000 })
                 .then(response => response.json())
                 .then(data => {
                     if (data) {
-                        document.getElementById('loc_x').textContent = "X Location: " + (String(data.loc_x) !== "" ? data.loc_x : "N/A");
-                        document.getElementById('loc_y').textContent = "Y Location: " + (String(data.loc_y) !== "" ? data.loc_y : "N/A");
-                        document.getElementById('pen_status').textContent = "Current Status: " + (String(data.pen_status) !== "" ? data.pen_status : "N/A");
+                        document.getElementById('loc_x').textContent = "X Location: " + (String(data[0]));
+                        document.getElementById('loc_y').textContent = "Y Location: " + (String(data[1]));
+                        document.getElementById('pen_status').textContent = "Current Status: " + (String(data[2]));
                         document.getElementById('messages').textContent = data.messages || document.getElementById('messages').textContent;
-                        if(data.enable == "disabled"){
+                        if(data[3] == "False"){
                           document.getElementById('enable').disabled=false;
                         }
                     }
@@ -218,7 +218,7 @@
 
 
         // Fetch and update robot status to 5 times every second
-        setInterval(updateStatus, 200)
+        setInterval(updateStatus, 2000)
 
     
     // Commands: No parameters taken in
@@ -254,15 +254,6 @@
     }
 
     // Mutators: Change the Interface HTML based on some information
-
-    function control_buttons(){
-
-    }
-
-    setInterval(control_buttons, 1000) // Check the button status every second
-
-
-
 
     </script>
   </body>

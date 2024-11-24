@@ -4,24 +4,48 @@ from bot import Bot
 import script
 
 robot = Bot()
-
 web_page = open("interface.html","r").read()
 
-# async method to handle http requests from the webserver
+header = 'HTTP/1.1 200 OK\r\nContent-Type: text/html\r\n\r\n'
+
+async def start_script():
+    if robot.enabled:
+        robot.auto_zero()
+        if hasattr(script, 'main'):
+            script.main(robot)
+            await asyncio.sleep(0)
+        else:
+            print("Error: Script does not have a main method.")
+    else:
+        print("Error: Robot is not enabled.")
+        await asyncio.sleep(0)
+        
+async def teleop_button(request):
+    if robot.enabled:
+        start_index = request.find('/teleop-button')
+        request_str = request[start_index:]
+        button_val = int(request_str[request_str.find('id')+3])
+        step_val = int(request_str[request_str.find('step')+6:])
+        print(button_val, step_val)
+        robot.teleop(button_val, step_val)
+    else:
+        print("Error: Robot is not enabled.")
+        await asyncio.sleep(0)
+    
+
 async def handle_request(reader, writer):
     try:
         # Read the request (up to 1024 bytes)
+        gc.collect()
         request = await reader.read(1024)
         request = request.decode('utf-8')
 
         if '/status' in request:
-            status = str(robot.get_status).replace("'",'"')
-            print(status)
-            response = status
+            response = robot.get_status()
 
         elif '/enable' in request:
             robot.enable()
-            response = "Robot is enabled" if robot.enabled else "Error in enabling"
+            response = "Robot is enabled"
             
         elif '/e-stop' in request:
             robot.disable()
@@ -40,28 +64,17 @@ async def handle_request(reader, writer):
             response = "Pen Down"
 
         elif '/start-script' in request:
-            if(robot.is_robot_zero() and robot.enabled):
-                if(robot.loc_x is not 0.0 or robot.loc_y is not 0.0):
-                    robot.auto_zero()
-                if hasattr(script, 'main'):
-                    script.main()
-                else:
-                    response = "script.py does not have a main method."
+            asyncio.create_task(start_script())
+            response = "script.main() has been called. See the terminal for more information."
 
         elif '/teleop-button' in request: # string parsing; do this later.
-            start_index = request.find('/teleop-button')
-            request_str = request[start_index:]
-            button_val = int(request_str[request_str.find('id')+3])
-            step_val = int(request_str[request_str.find('step')+6:])
-            print(button_val, step_val)
-            robot.teleop(button_val, step_val)
-            response = str(button_val) + " " + str(step_val)
+            asyncio.create_task(teleop_button(request))
+            response = "Teleop Mode request has been called. See the terminal for more information."
         elif '/' in request:  # Default route to serve the main HTML page
             # Read the HTML content from the file
             response = web_page
         
         # Prepare the HTTP response
-        header = 'HTTP/1.1 200 OK\r\nContent-Type: text/html\r\n\r\n'
         full_response = header + response
         
         # Send the response
@@ -86,9 +99,12 @@ async def start_server():
             await asyncio.sleep(3600)  # Keep the server running
     except asyncio.CancelledError:
         pass
+    
+
 
 # Run the server
 try:
     asyncio.run(start_server())
 except KeyboardInterrupt:
     print("Server stopped")
+

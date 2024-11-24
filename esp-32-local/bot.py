@@ -42,7 +42,7 @@ class Bot:
     # Following constants are in mm
     DISTANCE_PER_STEP = PULLEY_CIRCUM/STEPS_PER_REV # 0.2 mm
 
-    ACCEPTABLE_ERROR = 1 # This means that the acceptable error is 1mm, which doesn't make much of a difference visually.
+    ACCEPTABLE_ERROR = DISTANCE_PER_STEP # This means that the acceptable error is 0.2mm, which doesn't make much of a difference visually.
 
     # Conversion from inches to mm
     MAX_X_LOC = 8*25.4
@@ -176,7 +176,7 @@ class Bot:
             self.pen_servo.off()
         self.pen_state = True
     
-    def go_to(self, x: float, y: float):
+    def go_to(self, x: float, y: float, logger: bool = False):
 
         """
         This method takes in data from the HTML User interface, and moves the robot. It is primarily used for
@@ -185,11 +185,16 @@ class Bot:
             Args:
                 x (float): The desired x coordinate with reference to the zero point 
                 y (float): The desired y coordinate with reference to the zero point
+                logger (float) = False: If set to True, the go_to function returns a list of x and y coords. Recommended for vizualizations and debugging.
 
             Returns:
-                None
+                None if logger is False, Returns a 2D list [[x_coords],[y_coords]] of x and y coords for every iteration of the loop.
         """
 
+        x_coords = []
+        y_coords = []
+        x_coords.append(round(self.loc_x,2))
+        y_coords.append(round(self.loc_y,2))
         dx = x - self.loc_x
         dy = y - self.loc_y
         total_distance = (dx**2 + dy**2)**0.5
@@ -229,11 +234,17 @@ class Bot:
             for _ in range(round(step_dx/self.DISTANCE_PER_STEP)):
                 self.step_one_X()
                 self.update_loc_x()
+                if logger:
+                    x_coords.append(round(self.loc_x,2))
+                    y_coords.append(round(self.loc_y,2))
                 # for testing
                 #print("X :" + str(self.loc_x) + ", " + "Y: " + str(self.loc_y))
             for _ in range(round(step_dy/self.DISTANCE_PER_STEP)):
                 self.step_one_y()
                 self.update_loc_y()
+                if logger:
+                    x_coords.append(round(self.loc_x,2))
+                    y_coords.append(round(self.loc_y,2))
                 # for testing
                 #print("X :" + str(self.loc_x) + ", " + "Y: " + str(self.loc_y))
             
@@ -242,6 +253,11 @@ class Bot:
             dx = x - self.loc_x
             dy = y - self.loc_y
             total_distance = (dx**2 + dy**2)**0.5
+        
+        if logger:
+            return [x_coords, y_coords]
+        else:
+            return
 
 
 
@@ -389,7 +405,13 @@ class Bot:
 
 
     def get_status(self):
-        return {"loc_x": self.loc_x, "loc_y": self.loc_y, "pen_status": self.pen_state, "enable": self.enabled}
+        a = "Up"
+        b= "Not Enabled"
+        if self.pen_state:
+            a = "Down"
+        if self.enabled:
+            b = "Enabled"
+        return f'["{str(self.loc_x)}","{str(self.loc_y)}","{a}","{b}"]'
     
     
     # TODO: Think about error raising and how that'll work for the user.
@@ -413,6 +435,7 @@ class Bot:
         False = Closed
         """
         return self.limit_switch_y.value() == 1
+
 
 
 
