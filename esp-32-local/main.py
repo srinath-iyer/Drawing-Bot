@@ -2,6 +2,7 @@ import uasyncio as asyncio
 import bot
 from bot import Bot
 import script
+import json
 
 robot = Bot()
 web_page = open("interface.html","r").read()
@@ -12,6 +13,7 @@ async def start_script():
     if robot.enabled:
         robot.auto_zero()
         if hasattr(script, 'main'):
+            print("Script being run")
             script.main(robot)
             await asyncio.sleep(0)
         else:
@@ -24,13 +26,15 @@ async def teleop_button(request):
     if robot.enabled:
         start_index = request.find('/teleop-button')
         request_str = request[start_index:]
-        button_val = int(request_str[request_str.find('id')+3])
-        step_val = int(request_str[request_str.find('step')+6:])
-        print(button_val, step_val)
-        robot.teleop(button_val, step_val)
+        button_val = request_str[request_str.find('id')+3]
+        step_val = request_str[request_str.find('step')+6:request_str.find("HTTP")-1]
+        await robot.teleop(int(button_val), int(step_val))
     else:
         print("Error: Robot is not enabled.")
         await asyncio.sleep(0)
+        
+async def auto_zero():
+    await robot.auto_zero()
     
 
 async def handle_request(reader, writer):
@@ -45,15 +49,15 @@ async def handle_request(reader, writer):
 
         elif '/enable' in request:
             robot.enable()
-            response = "Robot is enabled"
+            response = "Robot is enabled" if robot.enabled else "Error in enabling"
             
         elif '/e-stop' in request:
             robot.disable()
             response = "Robot has been disabled. If you were mid-script, you will need to start over."
 
         elif '/auto-home' in request:
-            robot.auto_zero()
-            response = "Robot is zeroed" if robot.is_robot_zero else "That didn't work. Try again."
+            asyncio.create_task(auto_zero())
+            response = "Robot zero task has been called"
 
         elif '/pen-up' in request:
             robot.pen_up()

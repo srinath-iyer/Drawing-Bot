@@ -34,7 +34,7 @@
   <span> · </span>
     <a id = #documentation href="https://github.com/Louis3797/awesome-readme-template">Documentation</a>
   <span> · </span>
-    <a href="https://github.com/Louis3797/awesome-readme-template/issues/">CAD Model</a>
+    <a href="https://cad.onshape.com/documents/94f0b3225bc3cee80dd6bd7f/w/86bde690ac0739bb1e270967/e/8b0488b3bb58129bb2a0aa1e">CAD Model</a>
   <span> · </span>
     <a href="https://github.com/Louis3797/awesome-readme-template/issues/">More</a>
   </h4>
@@ -72,7 +72,7 @@
 ## About the Project
 
 ### Motivation
-This project was in response to a request by the EGR105L first year computing course at Duke University. 
+This project was in response to a request by the EGR105L first-year computing course at Duke University. 
 
 <!-- Screenshots -->
 ### :camera: Screenshots
@@ -89,7 +89,7 @@ This project was in response to a request by the EGR105L first year computing co
   - `bot.py`: A low level library that deals with robot control and direct microcontroller communication as well as simple controls functions so you can focus on developing higher-complexity algorithms.
   - `main.py` and `boot.py`: ESP32 native files that are run upon startup.
   - `script.py`: A canvas for the user to write and test their own commands and methods.
-- HTML/JS/CSS: Implementation of a socket web server for a User Interface and diagnostic dashboard.
+- `In Progress` HTML/JS/CSS: Implementation of a socket web server for a User Interface and diagnostic dashboard.
 
 <!-- Getting Started -->
 ## 	:toolbox: Getting Started

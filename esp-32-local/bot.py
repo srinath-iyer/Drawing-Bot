@@ -13,6 +13,8 @@ from servo import Servo
 
 import math
 
+import uasyncio as asyncio
+
 class Bot:
     
     # Constants:
@@ -176,7 +178,7 @@ class Bot:
             self.pen_servo.off()
         self.pen_state = True
     
-    def go_to(self, x: float, y: float, logger: bool = False):
+    async def go_to(self, x: float, y: float, logger: bool = False):
 
         """
         This method takes in data from the HTML User interface, and moves the robot. It is primarily used for
@@ -253,6 +255,7 @@ class Bot:
             dx = x - self.loc_x
             dy = y - self.loc_y
             total_distance = (dx**2 + dy**2)**0.5
+            await asyncio.sleep(0)
         
         if logger:
             return [x_coords, y_coords]
@@ -261,7 +264,7 @@ class Bot:
 
 
 
-    def teleop(self, button_id: int, steps: int):
+    async def teleop(self, button_id: int, steps: int):
         """
         This method allows users to manually control and move the robot a user-specified number of steps in a certain direction.
         
@@ -272,12 +275,16 @@ class Bot:
         Returns:
             None
         """
+        
+        if steps == 0:
+            return
 
         if button_id == self.HTML_BUTTON_UP: # + Y
             self.set_direction(self.direction_y, 0)
             for _ in range(steps):
                 self.step_one_y()
                 self.update_loc_y()
+                await asyncio.sleep(0)
 
         if button_id == self.HTML_BUTTON_DOWN: # - Y
             self.set_direction(self.direction_y, 1)
@@ -287,6 +294,7 @@ class Bot:
                     break
                 self.step_one_y()
                 self.update_loc_y()
+                await asyncio.sleep(0)
 
         if button_id == self.HTML_BUTTON_LEFT: # - X
             self.set_direction(self.direction_x, 0)
@@ -296,17 +304,19 @@ class Bot:
                     break
                 self.step_one_X()
                 self.update_loc_x()
+                await asyncio.sleep(0)
                 
         if button_id == self.HTML_BUTTON_RIGHT: # + X
             self.set_direction(self.direction_x, 1)
             for _ in range(steps):
                 self.step_one_X()
                 self.update_loc_x()
+                await asyncio.sleep(0)
 
         self.is_robot_zero()
 
 
-    def auto_zero(self):
+    async def auto_zero(self):
         """
         This method automatically zeros the robot X and Y axis. 
         
@@ -325,9 +335,11 @@ class Bot:
 
         while self.check_x_lim_switch():
             self.step_one_X()
+            await asyncio.sleep(0)
         while self.check_y_lim_switch():
             self.step_one_y()
-
+            await asyncio.sleep(0)
+            
         self.zero_X()
         self.zero_Y()
         self.is_robot_zero()
