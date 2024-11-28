@@ -145,8 +145,8 @@
         </div>
         <h2>Pen Up/Down</h2>
         <p id="pen_status">Current Status: </p>
-        <button type="button" onclick="pen_up()">Pen Up</button><br></br>
-        <button type="button" onclick="pen_down()">Pen Down</button>
+        <button type="button" onclick="command('pen-up::')">Pen Up</button><br></br>
+        <button type="button" onclick="command('pen-down::')">Pen Down</button>
 
         <h2>Teleop Mode: Manually control the robot</h2>
         <h3>Select Number of Steps and Click the Direction Buttons:</h3>
@@ -160,10 +160,10 @@
       </head>
       
         <div class="diamond-container">
-          <button class="up" onclick="teleop_button('0', document.getElementById('steps').value  || 0)">+Y</button>
-          <button class="down" onclick="teleop_button('1',document.getElementById('steps').value || 0)">-Y</button>
-          <button class="left" onclick="teleop_button('2',document.getElementById('steps').value || 0)">-X</button>
-          <button class="right" onclick="teleop_button('3',document.getElementById('steps').value || 0)">+X</button>
+          <button class="up" onclick="command('move:0:' + (document.getElementById('steps').value || '0'))">+Y</button>
+          <button class="down" onclick="command('move:1:' + (document.getElementById('steps').value || '0'))">-Y</button>
+          <button class="left" onclick="command('move:2:' + (document.getElementById('steps').value || '0'))">-X</button>
+          <button class="right" onclick="command('move:3:' + (document.getElementById('steps').value || '0'))">+X</button>
         </div>
 
         <div class="bot-location-container">
@@ -174,10 +174,10 @@
         </div>
 
         <div class="bot-runners-container">
-          <button id="stop" class="emergency" onclick="e_stop()">Stop</button>
-          <button id="auto-home" class="other_runners" onclick="auto_home()">Auto-Home</button>
-          <button id="enable" class="other_runners" onclick="enable()">Enable</button>
-          <button id="start_script" class="other_runners" onclick="start_script()">Start</button>
+          <button id="stop" class="emergency" onclick="command('stop::')">Stop</button>
+          <button id="auto-home" class="other_runners" onclick="command('auto-home::')">Auto-Home</button>
+          <button id="enable" class="other_runners" onclick="command('enable::')">Enable</button>
+          <button id="start_script" class="other_runners" onclick="command('start::')">Start</button>
 
         </div>
 
@@ -190,70 +190,26 @@
     </main>
     <script>
 
-    // Parametrized functions: Functions that take in data/output data based on user-defined parameters.
-    function pen_up(value){
-      fetch('/pen-up').then(response => response.text()).then(data => console.log("value is " + value));
 
-    }
-
-    function teleop_button(value, steps){
-      fetch(`/teleop-button?id=${value}&steps=${steps}`)
-    }
-
-    function updateStatus() { // Gets the status of the robot by sending a request to /status. Gets Loc and Pen State, as well as any messages
-            fetch('/status', { timeout: 5000 })
-                .then(response => response.json())
-                .then(data => {
-                    if (data) {
-                        document.getElementById('loc_x').textContent = "X Location: " + (String(data[0]));
-                        document.getElementById('loc_y').textContent = "Y Location: " + (String(data[1]));
-                        document.getElementById('pen_status').textContent = "Current Status: " + (String(data[2]));
-                        document.getElementById('messages').textContent = data.messages || document.getElementById('messages').textContent;
-                        if(data[3] == "False"){
-                          document.getElementById('enable').disabled=false;
-                        }
-                    }
+    async function command(command){
+      const response = await fetch('/command:'+command, {
+                    method: 'POST',
                 });
-        }
+                const result = await response;
+    }
+
+    async function getStatus(){
+      const response = await fetch('/status', {timeout:5000});
+      const data = await response.json();
+      document.getElementById('loc_x').textContent = "X Location: " + (String(data[0]));
+      document.getElementById('loc_y').textContent = "Y Location: " + (String(data[1]));
+      document.getElementById('pen_status').textContent = "Current Status: " + (String(data[2]));
+      document.getElementById('messages').textContent = data.messages || document.getElementById('messages').textContent;
+    }
 
 
         // Fetch and update robot status to 5 times every second
-        setInterval(updateStatus, 2000)
-
-    
-    // Commands: No parameters taken in
-
-    function pen_up(){
-      fetch('/pen-up')
-    }
-
-    function pen_down(){
-      fetch('/pen-down')
-    }
-
-    function e_stop(){
-      fetch('/e-stop')
-    }
-
-    function auto_home(){
-      fetch('/auto-home')
-
-    }
-
-    function enable(){
-      fetch('/enable',{method:"POST"})
-        .then(response => response.text())
-          .then(data => {document.getElementById('messages').textContent = "Robot is enabled.";
-            document.getElementById("enable").disabled = true;
-          })
-          
-    }
-
-    function start_script(){
-      fetch('/start-script')
-    }
-
-    // Mutators: Change the Interface HTML based on some information
+        setInterval(getStatus, 1000)
 
     </script>
   </body>

@@ -11,8 +11,6 @@ import utime
 
 from servo import Servo
 
-import math
-
 import uasyncio as asyncio
 
 class Bot:
@@ -416,19 +414,15 @@ class Bot:
             
 
 
-    def get_status(self):
+    async def get_status(self):
         a = "Up"
-        b= "Not Enabled"
+        b = "Not Enabled"
         if self.pen_state:
             a = "Down"
         if self.enabled:
             b = "Enabled"
         return f'["{str(self.loc_x)}","{str(self.loc_y)}","{a}","{b}"]'
     
-    
-    # TODO: Think about error raising and how that'll work for the user.
-    def raise_error(message, error_type):
-        pass
 
     def check_x_lim_switch(self):
         """
@@ -447,11 +441,3 @@ class Bot:
         False = Closed
         """
         return self.limit_switch_y.value() == 1
-
-
-
-
-
-
-
-
