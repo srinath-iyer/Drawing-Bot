@@ -6,29 +6,7 @@
     An open-source, python-based cartesian pen-plotting robot for CS education
   </p>
   
-  
-<!-- Badges
-<p>
-  <a href="https://github.com/srinath-iyer/Pen-Plotting-Bot/graphs/contributors">
-    <img src="https://img.shields.io/github/contributors/Louis3797/awesome-readme-template" alt="contributors" />
-  </a>
-  <a href="">
-    <img src="https://img.shields.io/github/last-commit/Louis3797/awesome-readme-template" alt="last update" />
-  </a>
-  <a href="https://github.com/srinath-iyer/Pen-Plotting-Bot/network/members">
-    <img src="https://img.shields.io/github/forks/Louis3797/awesome-readme-template" alt="forks" />
-  </a>
-  <a href="https://github.com/Louis3797/awesome-readme-template/stargazers">
-    <img src="https://img.shields.io/github/stars/Louis3797/awesome-readme-template" alt="stars" />
-  </a>
-  <a href="https://github.com/Louis3797/awesome-readme-template/issues/">
-    <img src="https://img.shields.io/github/issues/Louis3797/awesome-readme-template" alt="open issues" />
-  </a>
-  <a href="https://github.com/Louis3797/awesome-readme-template/blob/master/LICENSE">
-    <img src="https://img.shields.io/github/license/Louis3797/awesome-readme-template.svg" alt="license" />
-  </a>
-</p>
-    -->
+
 <h4>
     <a href="https://github.com/Louis3797/awesome-readme-template/">View Demo</a>
   <span> · </span>
@@ -47,7 +25,6 @@
 
 - [About the Project](#about-the-project)
   * [Motivation](#motivation)
-  * [Screenshots](#screenshots)
   * [Tech Stack](#tech-stack)
 - [Getting Started](#getting-started)
   * [Prerequisites](#bangbang-prerequisites)
@@ -55,14 +32,15 @@
     * [Step 1: Set up Micropython](#step-1-set-up-micropython)
     * [Step 2: Edit script.py and other files locally:](#step-2-edit-scriptpy-and-other-files-locally)
   * [Editing Code](#editing-code)
+    * [How Everything Works](#how-everything-works)
+    * [About `bot.py`](#about-botpy)
+    * [Asyncronous Programming](#asyncronous-programming)
+    * [Key Functions](#key-functions)
   * [Run Locally](#running-run-locally)
+    * [Run Code](#run-code)
+    * [Upload Files](#upload-files)
+    * [Important: Key Tips](#key-tips)
   * [Deployment](#triangular_flag_on_post-deployment)
-- [Usage](#eyes-usage)
-- [Roadmap](#compass-roadmap)
-- [Contributing](#wave-contributing)
-  * [Code of Conduct](#scroll-code-of-conduct)
-- [FAQ](#grey_question-faq)
-- [License](#warning-license)
 - [Contact](#handshake-contact)
 - [Acknowledgements](#gem-acknowledgements)
 
@@ -74,11 +52,9 @@
 ### Motivation
 This project was in response to a request by the EGR105L first-year computing course at Duke University. 
 
-<!-- Screenshots -->
-### :camera: Screenshots
 
-<div align="center"> 
-  <img src="https://placehold.co/600x400?text=Your+Screenshot+here" alt="screenshot" />
+<div align="left"> 
+  <img src="images/robotpic.jpg" width = "600px"/>
 </div>
 
 
@@ -89,7 +65,7 @@ This project was in response to a request by the EGR105L first-year computing co
   - `bot.py`: A low level library that deals with robot control and direct microcontroller communication as well as simple controls functions so you can focus on developing higher-complexity algorithms.
   - `main.py` and `boot.py`: ESP32 native files that are run upon startup.
   - `script.py`: A canvas for the user to write and test their own commands and methods.
-- `In Progress` HTML/JS/CSS: Implementation of a socket web server for a User Interface and diagnostic dashboard.
+- HTML/JS/CSS: Implementation of a socket web server for a User Interface and diagnostic dashboard.
 
 <!-- Getting Started -->
 ## 	:toolbox: Getting Started
@@ -118,7 +94,7 @@ Next, plug in the ESP32 microcontroller into your computer and open Thonny. Clic
 </div>
 <br>
 
-Next, click `Install or Update MicroPython` and using the following options, install micropython. Note: you will need to know what port your device is connected to. You can do this by trial and error. Usually, the correct option will say something like "USB Serial", but depends on your device. After you've selected the right port, you should click `install`. This will take a minute or two.
+Next, click `Install or Update MicroPython` and using the following options, install micropython. Usually, the correct port option will say something like "USB Serial" or "UART", but depends on your device and the ESP-32 you have. After you've selected the right port, you should click `install`. This will take a minute or two.
 
 <br>
 <div align="left"> 
@@ -150,8 +126,40 @@ Additionally, if you don't want to use git, you can export the repo as a zip fil
 
 <br>
 
+Next, change the JSON in `network.txt`. If you are joining an open network, just change the network SSID, and set the Password parameter to `None`. If you are joining a network that requires a password, set the Password parameter as well. For example, `network.txt` should be like the following:
+
+Open: 
+```bash
+{"SSID":"DukeOpen","Password":"None"}
+```
+
+Closed:
+```bash
+{"SSID":"ClosedNetwork","Password":"1234"}
+```
+You can test that your wifi setup works, and we recommend this before you start coding. Plug in the ESP-32, and open Thonny. In our experience, Thonny sometimes auto connects, and causes the ESP32 to start running the files. If that happens, wait for this in the REPL:
+
+<div align="left"> 
+  <img src="images/step2-wifi-success.png" alt="screenshot" width="800px"/>
+</div>
+
+If you don't see the ESP-32 running immediately, go to `Run -> Configure Interpreter -> Pick the right Port -> Ok` and the ESP-32 should run. If it doesn't run after connecting, press the `EN` button on the ESP-32. If it still doesn't work, try configuring the interpreter again.
+
+Once you have successfully connected to the network of your choice, you are ready to begin editing `script.py`. 
+
+
 <!-- Running Tests -->
 ### :test_tube: Editing Code
+
+#### How Everything Works
+
+Before you start to work with the code, we think it's important that you should know how everything works. As mentioned earlier, the 
+
+#### About `bot.py`
+
+#### Asyncronous Programming
+
+#### Key Functions
 
 To run tests, run the following command
 
@@ -196,46 +204,6 @@ To deploy this project run
   yarn deploy
 ```
 
-
-<!-- Usage -->
-## :eyes: Usage
-
-Use this space to tell a little more about your project and how it can be used. Show additional screenshots, code samples, demos or link to other resources.
-
-
-```javascript
-import Component from 'my-project'
-
-function App() {
-  return <Component />
-}
-```
-
-<!-- Roadmap -->
-## :compass: Roadmap
-
-* [x] Todo 1
-* [ ] Todo 2
-
-
-<!-- Contributing -->
-## :wave: Contributing
-
-<a href="https://github.com/Louis3797/awesome-readme-template/graphs/contributors">
-  <img src="https://contrib.rocks/image?repo=Louis3797/awesome-readme-template" />
-</a>
-
-
-Contributions are always welcome!
-
-See `contributing.md` for ways to get started.
-
-
-<!-- Code of Conduct -->
-### :scroll: Code of Conduct
-
-Please read the [Code of Conduct](https://github.com/Louis3797/awesome-readme-template/blob/master/CODE_OF_CONDUCT.md)
-
 <!-- FAQ -->
 ## :grey_question: FAQ
 
@@ -259,19 +227,16 @@ Distributed under the MIT License. See LICENSE.txt for more information.
 
 Srinath Iyer - srinath.iyer@duke.edu
 <br>
-Niko Weaver - 
+Niko Weaver - niko.weaver@duke.edu
 <br>
-Kelvin Zhang
+Kelvin Zhang - kelvin.zhang@duke.edu
 <br>
-Jack Voelker
+Jack Voelker - jack.voelker@duke.edu
 
 
 <!-- Acknowledgments -->
 ## Acknowledgements
 
-Use this section to mention useful resources and libraries that you have used in your projects.
+We would like to thank Duke University, and the Pratt School of Engineering First Year Design program for providing us financial support and mentorship.
 
- - [Shields.io](https://shields.io/)
- - [Awesome README](https://github.com/matiassingers/awesome-readme)
- - [Emoji Cheat Sheet](https://github.com/ikatyang/emoji-cheat-sheet/blob/master/README.md#travel--places)
- - [Readme Template](https://github.com/othneildrew/Best-README-Template)
+Specifically, we would like to extend our gratitude to Dr. Delagrammatikas, Dr. Lipp, Dr. Smith, Dagan Trnka, and Rodrigo Bassi Guerreiro for their assistance on this project.
