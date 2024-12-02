@@ -193,7 +193,6 @@ class Bot:
 
         if x >= self.MAX_X_LOC or y >= self.MAX_Y_LOC:
             raise ValueError("Error: x and/or y not within the robot range.")
-            return
 
         x_coords = []
         y_coords = []
