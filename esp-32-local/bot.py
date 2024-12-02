@@ -191,6 +191,10 @@ class Bot:
                 None if logger is False, Returns a 2D list [[x_coords],[y_coords]] of x and y coords for every iteration of the loop.
         """
 
+        if x >= self.MAX_X_LOC or y >= self.MAX_Y_LOC:
+            raise ValueError("Error: x and/or y not within the robot range.")
+            return
+
         x_coords = []
         y_coords = []
         x_coords.append(round(self.loc_x,2))
