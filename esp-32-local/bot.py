@@ -164,7 +164,7 @@ class Bot:
         This method moves or keeps the pen up.
         """
         if self.pen_state: # true = pen down
-            self.pen_servo.write(45)
+            self.pen_servo.write(60)
         self.pen_state = False
 
 
