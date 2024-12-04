@@ -13,7 +13,7 @@ async def handle_command(data):
     data = data.split(":")
     if data[1] == 'stop':
         robot.disable()
-        return "robot stopped"
+        return "Robot Stopped. However, the robot will continue on its path if you enable again."
     elif data[1] == 'auto-home':
         await robot.auto_zero()
         return "robot zeroed"

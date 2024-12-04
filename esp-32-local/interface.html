@@ -176,8 +176,8 @@
         <div class="bot-runners-container">
           <button id="stop" class="emergency" onclick="command('stop::')">Stop</button>
           <button id="auto-home" class="other_runners" onclick="command('auto-home::')">Auto-Home</button>
-          <button id="enable" class="other_runners" onclick="command('enable::')">Enable</button>
-          <button id="start_script" class="other_runners" onclick="command('start::')">Start</button>
+          <button id="enable" class="other_runners" onclick="command('enable::')">Enable Motors</button>
+          <button id="start_script" class="other_runners" onclick="command('start::')">Run Script</button>
 
         </div>
 
@@ -189,13 +189,14 @@
 
     </main>
     <script>
-
+    alert("If you haven't used the UI before, read the docs here: https://github.com/srinath-iyer/Pen-Plotting-Bot")
 
     async function command(command){
       const response = await fetch('/command:'+command, {
                     method: 'POST',
                 });
                 const result = await response;
+                document.getElementById('messages').textContent = response.text();
     }
 
     async function getStatus(){

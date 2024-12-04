@@ -98,7 +98,7 @@ class Bot:
 
         # Get robot ready for motion:
         self.enable()
-        self.set_direction(self.direction_x, 0) # - X
+        self.set_direction(self.direction_x, 1) # - X
         self.set_direction(self.direction_y, 1) # - Y
 
 
@@ -191,7 +191,7 @@ class Bot:
                 None if logger is False, Returns a 2D list [[x_coords],[y_coords]] of x and y coords for every iteration of the loop.
         """
 
-        if x >= self.MAX_X_LOC or y >= self.MAX_Y_LOC:
+        if x > self.MAX_X_LOC or y > self.MAX_Y_LOC:
             raise ValueError("Error: x and/or y not within the robot range.")
 
         x_coords = []
@@ -210,9 +210,9 @@ class Bot:
             # Handle all direction switches
 
             if(x > self.loc_x):
-                self.set_direction(self.direction_x, 1)
-            if(x < self.loc_x):
                 self.set_direction(self.direction_x, 0)
+            if(x < self.loc_x):
+                self.set_direction(self.direction_x, 1)
             if(y > self.loc_y):
                 self.set_direction(self.direction_y, 0)
             if(y < self.loc_y):
@@ -298,7 +298,7 @@ class Bot:
                 await asyncio.sleep(0)
 
         if button_id == self.HTML_BUTTON_LEFT: # - X
-            self.set_direction(self.direction_x, 0)
+            self.set_direction(self.direction_x, 1)
             for _ in range(steps):
                 if(not self.check_x_lim_switch):
                     self.zero_X()
@@ -308,7 +308,7 @@ class Bot:
                 await asyncio.sleep(0)
                 
         if button_id == self.HTML_BUTTON_RIGHT: # + X
-            self.set_direction(self.direction_x, 1)
+            self.set_direction(self.direction_x, 0)
             for _ in range(steps):
                 self.step_one_X()
                 self.update_loc_x()
@@ -331,7 +331,7 @@ class Bot:
 
 
         """
-        self.set_direction(self.direction_x,0)
+        self.set_direction(self.direction_x,1)
         self.set_direction(self.direction_y,1)
 
         while self.check_x_lim_switch():
@@ -392,9 +392,9 @@ class Bot:
             None
         """
         
-        if self.direction_x.value() == 1:
+        if self.direction_x.value() == 0:
             self.loc_x += self.DISTANCE_PER_STEP 
-        elif self.direction_x.value() == 0:
+        elif self.direction_x.value() == 1:
             self.loc_x -= self.DISTANCE_PER_STEP
             
             
