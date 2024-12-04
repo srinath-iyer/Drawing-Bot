@@ -29,7 +29,6 @@ async def main(robot:Bot):
         theta+=(2*math.pi)/x
         x_curr = center_x + radius * math.cos(theta)
         y_curr = center_y + radius * math.sin(theta)
-        await robot.go_to(x_init,y_init,x_curr,y_curr,1,0.2)
-        x_init,y_init = robot.loc_x, robot.loc_y
+        await robot.go_to(x_curr,y_curr)
 
         

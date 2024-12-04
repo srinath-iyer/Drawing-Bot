@@ -195,8 +195,8 @@
       const response = await fetch('/command:'+command, {
                     method: 'POST',
                 });
-                const result = await response;
-                document.getElementById('messages').textContent = response.text();
+                const result = await response.text();
+                document.getElementById('messages').textContent = result;
     }
 
     async function getStatus(){
