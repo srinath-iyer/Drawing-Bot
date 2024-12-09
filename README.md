@@ -8,7 +8,7 @@
   
 
 <h4>
-    <a href="https://github.com/Louis3797/awesome-readme-template/">View Demo</a>
+    <a href="https://www.youtube.com/watch?v=KgujtE1zDqk">View Demo</a>
   <span> · </span>
     <a href="https://cad.onshape.com/documents/94f0b3225bc3cee80dd6bd7f/w/86bde690ac0739bb1e270967/e/8b0488b3bb58129bb2a0aa1e">CAD Model</a>
   </h4>
@@ -162,7 +162,7 @@ Asynchronous programming is one of the driving frameworks of the codebase. We'll
 
 Programming that you are most likely familiar with is Synchronous in nature. That means that everything happens in order. Let's say we make an API call that will take 5 seconds to return a result. This means that the code is blocked for that 5 second duration - no other actions can be performed. You can imagine why this would be bad for a robot, or the web server. If we're running a script on the robot, and we want to do something else mid-script, like pen-up/down or even disabling the robot is something is going wrong, we don't want the script to be blocking the code. If we wrote everything synchronously, then the robot would be unable to take any further input while it's performing any action.
 
-The solution to this is asynchronous programming; from a high level, async programming allows us to call APIs, but not have them block the code. So in the example above, calling the 5 second API wouldn't block the code for 5 seconds; instead, it returns an awaitable object, and then runs the called async function in the background and then returns a final result. This is why we use the `await` keyword when calling async functions.
+The solution to this is asynchronous programming; from a high level, async programming allows us to call APIs, but not have them block the code. So in the example above, calling the 5 second API wouldn't block the code for 5 seconds; instead, it returns an awaitable object, and then schedules to run the called async function in the background which then returns a final result. This is why we use the `await` keyword when calling async functions. Additionally, within our async funcions, we have lines of code that give control back to the main control loop, allowing more commands to be added on even mid long scripts.
 
 There is a lot more nuance to the architecture of asynchronous programming, so if you're interested, we suggest reading further. However, an in-depth understanding of async programming is not at all required for writing code.
 
